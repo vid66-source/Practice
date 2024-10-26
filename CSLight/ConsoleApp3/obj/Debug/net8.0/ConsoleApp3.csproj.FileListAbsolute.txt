@@ -1,0 +1,14 @@
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\bin\Debug\net8.0\ConsoleApp3.exe
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\bin\Debug\net8.0\ConsoleApp3.deps.json
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\bin\Debug\net8.0\ConsoleApp3.runtimeconfig.json
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\bin\Debug\net8.0\ConsoleApp3.dll
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\bin\Debug\net8.0\ConsoleApp3.pdb
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\obj\Debug\net8.0\ConsoleApp3.GeneratedMSBuildEditorConfig.editorconfig
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\obj\Debug\net8.0\ConsoleApp3.AssemblyInfoInputs.cache
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\obj\Debug\net8.0\ConsoleApp3.AssemblyInfo.cs
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\obj\Debug\net8.0\ConsoleApp3.csproj.CoreCompileInputs.cache
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\obj\Debug\net8.0\ConsoleApp3.dll
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\obj\Debug\net8.0\refint\ConsoleApp3.dll
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\obj\Debug\net8.0\ConsoleApp3.pdb
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\obj\Debug\net8.0\ConsoleApp3.genruntimeconfig.cache
+F:\Studying\C#\Practice\CSLight\ConsoleApp3\obj\Debug\net8.0\ref\ConsoleApp3.dll

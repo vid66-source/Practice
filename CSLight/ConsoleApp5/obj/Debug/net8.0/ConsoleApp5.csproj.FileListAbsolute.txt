@@ -1,0 +1,14 @@
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\bin\Debug\net8.0\ConsoleApp5.exe
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\bin\Debug\net8.0\ConsoleApp5.deps.json
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\bin\Debug\net8.0\ConsoleApp5.runtimeconfig.json
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\bin\Debug\net8.0\ConsoleApp5.dll
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\bin\Debug\net8.0\ConsoleApp5.pdb
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\obj\Debug\net8.0\ConsoleApp5.GeneratedMSBuildEditorConfig.editorconfig
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\obj\Debug\net8.0\ConsoleApp5.AssemblyInfoInputs.cache
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\obj\Debug\net8.0\ConsoleApp5.AssemblyInfo.cs
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\obj\Debug\net8.0\ConsoleApp5.csproj.CoreCompileInputs.cache
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\obj\Debug\net8.0\ConsoleApp5.dll
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\obj\Debug\net8.0\refint\ConsoleApp5.dll
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\obj\Debug\net8.0\ConsoleApp5.pdb
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\obj\Debug\net8.0\ConsoleApp5.genruntimeconfig.cache
+F:\Studying\C#\Practice\CSLight\ConsoleApp5\obj\Debug\net8.0\ref\ConsoleApp5.dll

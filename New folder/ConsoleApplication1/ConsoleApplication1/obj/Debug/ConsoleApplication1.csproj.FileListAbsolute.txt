@@ -1,0 +1,6 @@
+I:\BookPractice\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.csproj.AssemblyReference.cache
+I:\BookPractice\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.csproj.CoreCompileInputs.cache
+I:\BookPractice\ConsoleApplication1\ConsoleApplication1\bin\Debug\ConsoleApplication1.exe
+I:\BookPractice\ConsoleApplication1\ConsoleApplication1\bin\Debug\ConsoleApplication1.pdb
+I:\BookPractice\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.exe
+I:\BookPractice\ConsoleApplication1\ConsoleApplication1\obj\Debug\ConsoleApplication1.pdb

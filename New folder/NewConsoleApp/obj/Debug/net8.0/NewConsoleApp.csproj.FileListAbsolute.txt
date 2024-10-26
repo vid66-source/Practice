@@ -1,0 +1,14 @@
+F:\Study\BookPractice\NewConsoleApp\bin\Debug\net8.0\NewConsoleApp.exe
+F:\Study\BookPractice\NewConsoleApp\bin\Debug\net8.0\NewConsoleApp.deps.json
+F:\Study\BookPractice\NewConsoleApp\bin\Debug\net8.0\NewConsoleApp.runtimeconfig.json
+F:\Study\BookPractice\NewConsoleApp\bin\Debug\net8.0\NewConsoleApp.dll
+F:\Study\BookPractice\NewConsoleApp\bin\Debug\net8.0\NewConsoleApp.pdb
+F:\Study\BookPractice\NewConsoleApp\obj\Debug\net8.0\NewConsoleApp.GeneratedMSBuildEditorConfig.editorconfig
+F:\Study\BookPractice\NewConsoleApp\obj\Debug\net8.0\NewConsoleApp.AssemblyInfoInputs.cache
+F:\Study\BookPractice\NewConsoleApp\obj\Debug\net8.0\NewConsoleApp.AssemblyInfo.cs
+F:\Study\BookPractice\NewConsoleApp\obj\Debug\net8.0\NewConsoleApp.csproj.CoreCompileInputs.cache
+F:\Study\BookPractice\NewConsoleApp\obj\Debug\net8.0\NewConsoleApp.dll
+F:\Study\BookPractice\NewConsoleApp\obj\Debug\net8.0\refint\NewConsoleApp.dll
+F:\Study\BookPractice\NewConsoleApp\obj\Debug\net8.0\NewConsoleApp.pdb
+F:\Study\BookPractice\NewConsoleApp\obj\Debug\net8.0\NewConsoleApp.genruntimeconfig.cache
+F:\Study\BookPractice\NewConsoleApp\obj\Debug\net8.0\ref\NewConsoleApp.dll

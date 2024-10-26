@@ -1,0 +1,6 @@
+I:\BookPractice\IterationsAndDecisions\IterationsAndDecisions\obj\Debug\IterationsAndDecisions.csproj.AssemblyReference.cache
+I:\BookPractice\IterationsAndDecisions\IterationsAndDecisions\obj\Debug\IterationsAndDecisions.csproj.CoreCompileInputs.cache
+I:\BookPractice\IterationsAndDecisions\IterationsAndDecisions\bin\Debug\IterationsAndDecisions.exe
+I:\BookPractice\IterationsAndDecisions\IterationsAndDecisions\bin\Debug\IterationsAndDecisions.pdb
+I:\BookPractice\IterationsAndDecisions\IterationsAndDecisions\obj\Debug\IterationsAndDecisions.exe
+I:\BookPractice\IterationsAndDecisions\IterationsAndDecisions\obj\Debug\IterationsAndDecisions.pdb

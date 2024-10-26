@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp3", "ConsoleApp3.csproj", "{4059822D-B26D-444E-BFD2-0E98F12BBE56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp4", "..\ConsoleApp4\ConsoleApp4.csproj", "{77FD377E-3222-45F3-9565-3D9ED166B544}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4059822D-B26D-444E-BFD2-0E98F12BBE56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4059822D-B26D-444E-BFD2-0E98F12BBE56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4059822D-B26D-444E-BFD2-0E98F12BBE56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4059822D-B26D-444E-BFD2-0E98F12BBE56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B40059C-4650-4917-BEDC-ECED94DB1E7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B40059C-4650-4917-BEDC-ECED94DB1E7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B40059C-4650-4917-BEDC-ECED94DB1E7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B40059C-4650-4917-BEDC-ECED94DB1E7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77FD377E-3222-45F3-9565-3D9ED166B544}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77FD377E-3222-45F3-9565-3D9ED166B544}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77FD377E-3222-45F3-9565-3D9ED166B544}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77FD377E-3222-45F3-9565-3D9ED166B544}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3C127019-1477-4E8E-A882-1803497A4E03}
+	EndGlobalSection
+EndGlobal
