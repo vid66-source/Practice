@@ -1,0 +1,15 @@
+F:\Studying\C#\Practice\CSLight\FightWithBoss\obj\Debug\net8.0\FightWithBoss.GeneratedMSBuildEditorConfig.editorconfig
+F:\Studying\C#\Practice\CSLight\FightWithBoss\obj\Debug\net8.0\FightWithBoss.AssemblyInfoInputs.cache
+F:\Studying\C#\Practice\CSLight\FightWithBoss\obj\Debug\net8.0\FightWithBoss.AssemblyInfo.cs
+F:\Studying\C#\Practice\CSLight\FightWithBoss\obj\Debug\net8.0\FightWithBoss.csproj.CoreCompileInputs.cache
+F:\Studying\C#\Practice\CSLight\FightWithBoss\obj\Debug\net8.0\FightWithBoss.sourcelink.json
+F:\Studying\C#\Practice\CSLight\FightWithBoss\bin\Debug\net8.0\FightWithBoss.exe
+F:\Studying\C#\Practice\CSLight\FightWithBoss\bin\Debug\net8.0\FightWithBoss.deps.json
+F:\Studying\C#\Practice\CSLight\FightWithBoss\bin\Debug\net8.0\FightWithBoss.runtimeconfig.json
+F:\Studying\C#\Practice\CSLight\FightWithBoss\bin\Debug\net8.0\FightWithBoss.dll
+F:\Studying\C#\Practice\CSLight\FightWithBoss\bin\Debug\net8.0\FightWithBoss.pdb
+F:\Studying\C#\Practice\CSLight\FightWithBoss\obj\Debug\net8.0\FightWithBoss.dll
+F:\Studying\C#\Practice\CSLight\FightWithBoss\obj\Debug\net8.0\refint\FightWithBoss.dll
+F:\Studying\C#\Practice\CSLight\FightWithBoss\obj\Debug\net8.0\FightWithBoss.pdb
+F:\Studying\C#\Practice\CSLight\FightWithBoss\obj\Debug\net8.0\FightWithBoss.genruntimeconfig.cache
+F:\Studying\C#\Practice\CSLight\FightWithBoss\obj\Debug\net8.0\ref\FightWithBoss.dll
