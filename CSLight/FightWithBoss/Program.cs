@@ -13,6 +13,7 @@ class Program
         float bossHp = 1500f;
         float bossDmg = 150f;
         float heroHp = 1000f;
+        float heroFullHp;
         float veilOfShadowsDodge = 0.5f;
         float veilOfShadowsCost = 100f;
         int veilOfShadowsCounter = 0;
@@ -23,6 +24,8 @@ class Program
         int shadowPactCounter = 0;
         string spellChoise = "";
 
+        heroFullHp = heroHp;
+
         Console.WriteLine("You, the mighty shadow wizard, enter the cave. You see two blood-red eyes gleaming from the darkness, watching you hungrily." +
         " A creature emerges from the shadows, born from the most horrific and cruel depths of hell.\nYou have 4 spells:");
 
@@ -32,90 +35,120 @@ class Program
         Console.WriteLine("4. Shadow Pact - The forces of darkness enhance your attack spells, increasing their power by " + shadowPactIncDmg + " when you have Shadow Pact counters on you, but you lose your turn and lose " + shadowPactCost + " hit points.");
         Console.WriteLine("You engage in battle, choose spell number.");
 
-        while (bossHp > 0 || heroHp > 0)
+        while (bossHp > 0 && heroHp > 0)
         {
-            spellChoise = Console.ReadLine();
-            switch (spellChoise)
+            bool validChoise = false;
+            while (!validChoise)
             {
-                case "1":
-                    Console.WriteLine("You casted Veil of Shadows. Now you have 3 turns while Demon attacks will be weaker.");
-                    heroHp -= veilOfShadowsCost;
-                    veilOfShadowsCounter = 3;
-                    break;
-                case "2":
-                    if (veilOfShadowsCounter > 0)
-                    {
-                        Console.WriteLine("You casted Eclipse Strike. A powerful shadow strike hits the Demon.");
-                        if (shadowPactCounter > 0)
+                Console.WriteLine("Choose your spell (1, 2, 3, or 4):");
+                spellChoise = Console.ReadLine();
+
+                switch (spellChoise)
+                {
+                    case "1":
+                        if (heroHp > veilOfShadowsCost)
                         {
-                            bossHp -= ((eclipseStrikeDmg * shadowPactIncDmg) + eclipseStrikeDmg);
-                            shadowPactCounter -= 1;
-                            veilOfShadowsCounter -= 1;
+                            Console.WriteLine("You casted Veil of Shadows. You lose " + shadowPactCost + " hp, but now you have this and next 3 turns while Demon attacks will be weaker.");
+                            heroHp -= veilOfShadowsCost;
+                            veilOfShadowsCounter = 3;
+                            validChoise = true;
                         }
                         else
                         {
-                            bossHp -= eclipseStrikeDmg;
-                            veilOfShadowsCounter -= 1;
+                            Console.WriteLine("You have not enough hp for cast.");
                         }
-                    }
-                    else
-                    {
-                        Console.WriteLine("You can cast Eclipse Strike only after Veil of Shadows cast.");
-                    }
-                    break;
-                case "3":
-                    if (heroHp >= 850)
-                    {
-                        Console.WriteLine("You casted Whispers of the Abyss. Dark voices heal you.");
-                        heroHp = 1000;
-                        if (veilOfShadowsCounter > 0)
-                        {
-                            veilOfShadowsCounter -= 1;
-                        }
-                    }
-                    else if (heroHp < 850)
-                    {
-                        Console.WriteLine("You casted Whispers of the Abyss. Dark voices heal you.");
-                        heroHp += whispersOfTheAbyssHeal;
-                        if (veilOfShadowsCounter > 0)
-                        {
-                            veilOfShadowsCounter -= 1;
-                        }
-                    }
+                        break;
 
-                    break;
-                case "4":
-                    Console.WriteLine("You casted Shadow Pact. Dark forces enhance your attacks next 3 turns.");
-                    shadowPactCounter = 3;
-                    if (veilOfShadowsCounter > 0)
-                    {
-                        veilOfShadowsCounter -= 1;
-                    }
-                    break;
-                default:
-                    Console.WriteLine("Make a right choise");
-                    break;
+                    case "2":
+                        if (veilOfShadowsCounter > 0)
+                        {
+                            Console.WriteLine("You casted Eclipse Strike. A powerful shadow strike hits the Demon.");
+                            if (shadowPactCounter > 0)
+                            {
+                                bossHp -= ((eclipseStrikeDmg * shadowPactIncDmg) + eclipseStrikeDmg);
+                                shadowPactCounter -= 1;
+                                veilOfShadowsCounter -= 1;
+                            }
+                            else
+                            {
+                                bossHp -= eclipseStrikeDmg;
+                                veilOfShadowsCounter -= 1;
+                            }
+                            validChoise = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("You can cast Eclipse Strike only with Veil of Shadows counters on you.");
+                        }
+                        break;
+
+                    case "3":
+                        if (heroFullHp == heroHp)
+                        {
+                            Console.WriteLine("You have maximum HP, you don't need to heal.");
+                        }
+                        else
+                        {
+                            heroHp += whispersOfTheAbyssHeal;
+                            if (heroHp > heroFullHp)
+                            {
+                                Console.WriteLine("You casted Whispers of the Abyss. Dark voices whispering healing you.");
+                                heroHp = heroFullHp;
+                                if (veilOfShadowsCounter > 0)
+                                {
+                                    veilOfShadowsCounter -= 1;
+                                }
+                                validChoise = true;
+                            }
+                        }
+                        break;
+
+                    case "4":
+                        if (heroHp > shadowPactCost)
+                        {
+                            Console.WriteLine("You casted Shadow Pact. You lose " + shadowPactCost + " hp. Dark forces enhance your attacks while Shadow Pact counters on you.");
+                            heroHp -= shadowPactCost;
+                            shadowPactCounter = 3;
+                            if (veilOfShadowsCounter > 0)
+                            {
+                                veilOfShadowsCounter -= 1;
+                            }
+                            validChoise = true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("You have not enough hp for cast.");
+                        }
+                        break;
+
+                    default:
+                        Console.WriteLine("Make a right choise");
+                        break;
+                }
             }
             if (heroHp > 0 && bossHp > 0 && veilOfShadowsCounter > 0)
             {
                 heroHp -= bossDmg * veilOfShadowsDodge;
+                Console.WriteLine("Demon attacks you. You gained " + (bossDmg * veilOfShadowsDodge) + " demage.");
             }
             else if (heroHp > 0 && bossHp > 0 && veilOfShadowsCounter == 0)
             {
                 heroHp -= bossDmg;
+                Console.WriteLine("Demon attacks you. You gained " + bossDmg + " demage.");
             }
-            else if (bossHp <= 0)
+            if (bossHp > 0 && heroHp > 0)
             {
-                Console.WriteLine("Glorious victory");
-                break;
+                Console.WriteLine("Hero has " + heroHp + " hp, " + veilOfShadowsCounter + " Veil of Shadows and " +
+                shadowPactCounter + " Shadow Pact counters. Demon Boss has " + bossHp + " hp.");
             }
-            else if (heroHp <= 0)
-            {
-                Console.WriteLine("Disgraceful defeat");
-                break;
-            }
-            Console.WriteLine("Hero has " + heroHp + " hp, " + veilOfShadowsCounter + " Veil of Shadows and " +
-            shadowPactCounter + " Shadow Pact counters. Demon Boss has " + bossHp + " hp.");
+        }
+        if (bossHp <= 0)
+        {
+            Console.WriteLine("Demon defeated. Glorious victory");
+        }
+        else if (heroHp <= 0)
+        {
+            Console.WriteLine("You lost. Demon is eating your dead body. Disgraceful defeat");
         }
     }
 }
