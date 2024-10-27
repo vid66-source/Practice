@@ -30,7 +30,7 @@ class Program
         "A creature emerges from the shadows, born from the most horrific and cruel depths of hell.\nThis Demon has " + bossHp + " hit points and deals " + bossDmg + " damage.\n" +
         "You have " + heroHp + " hit points and 4 spells:");
 
-        Console.WriteLine("1. Veil of Shadows - Shadows cloak you, reducing the damage taken by " + veilOfShadowsDodge + " for this and the next 3 turns, at the cost of " + veilOfShadowsCost + " hit points, but you lose your turn.");
+        Console.WriteLine("1. Veil of Shadows - Shadows cloak you, reducing the damage taken by " + veilOfShadowsDodge + " for this and the next 2 turns, at the cost of " + veilOfShadowsCost + " hit points, but you lose your turn.");
         Console.WriteLine("2. Eclipse Strike - Deals a powerful shadow strike, dealing " + eclipseStrikeDmg + " damage to the enemy. Can only be used while Veil of Shadows counters are on you.");
         Console.WriteLine("3. Whispers of the Abyss - Summons mysterious voices from the darkness, healing you for " + whispersOfTheAbyssHeal + " hit points, but you lose your turn.");
         Console.WriteLine("4. Shadow Pact - The forces of darkness enhance your attack spells, increasing their power by " + shadowPactIncDmg + " times the base damage when you have Shadow Pact counters on you, but you lose your turn and lose " + shadowPactCost + " hit points.");
@@ -49,7 +49,7 @@ class Program
                     case "1":
                         if (heroHp > veilOfShadowsCost)
                         {
-                            Console.WriteLine("You casted Veil of Shadows. You lose " + veilOfShadowsCost + " hp, but now you have this and next 3 turns where Demon attacks will be weaker.");
+                            Console.WriteLine("You casted Veil of Shadows. You lose " + veilOfShadowsCost + " hp, but now you have this and next 2 turns where Demon attacks will be weaker.");
                             heroHp -= veilOfShadowsCost;
                             veilOfShadowsCounter = 3;
                             validChoise = true;
