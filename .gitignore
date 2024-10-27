@@ -20,3 +20,4 @@
 
 # Ignore AssemblyInfo.cs in any directory
 **/AssemblyInfo.cs
+CSLight/FightWithBoss/obj/Debug/net8.0/FightWithBoss.AssemblyInfo.cs
