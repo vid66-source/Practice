@@ -6,3 +6,17 @@
 
 # Ігнорувати кеш файли
 **/*.cache
+
+# Ignore all build artifacts in any directory
+**/bin/
+**/obj/
+**/build/
+
+# Ignore specific file types in any directory
+**/*.pdb
+**/*.exe
+**/*.cache
+**/*.json
+
+# Ignore AssemblyInfo.cs in any directory
+**/AssemblyInfo.cs
