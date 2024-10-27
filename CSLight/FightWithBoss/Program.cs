@@ -15,9 +15,9 @@ class Program
         float heroHp = 1000f;
         float heroFullHp;
         float veilOfShadowsDodge = 0.5f;
-        float veilOfShadowsCost = 100f;
+        float veilOfShadowsCost = 75f;
         int veilOfShadowsCounter = 0;
-        float whispersOfTheAbyssHeal = 1500f;
+        float whispersOfTheAbyssHeal = 150f;
         float eclipseStrikeDmg = 300f;
         float shadowPactCost = 50f;
         float shadowPactIncDmg = 0.25f;
@@ -27,12 +27,13 @@ class Program
         heroFullHp = heroHp;
 
         Console.WriteLine("You, the mighty shadow wizard, enter the cave. You see two blood-red eyes gleaming from the darkness, watching you hungrily." +
-        " A creature emerges from the shadows, born from the most horrific and cruel depths of hell.\nYou have 4 spells:");
+        " A creature emerges from the shadows, born from the most horrific and cruel depths of hell.\nThis Demon has " + bossHp + " hit points and deals " + bossDmg + " damage.\n" +
+        "You have " + heroHp + " hit points and 4 spells:");
 
-        Console.WriteLine("1. Veil of Shadows - Shadows cloak you, reducing the damage taken by half for this and the next 3 turns, at the cost of " + veilOfShadowsCost + " hit points, but you lose your turn.");
+        Console.WriteLine("1. Veil of Shadows - Shadows cloak you, reducing the damage taken by " + veilOfShadowsDodge + " for this and the next 3 turns, at the cost of " + veilOfShadowsCost + " hit points, but you lose your turn.");
         Console.WriteLine("2. Eclipse Strike - Deals a powerful shadow strike, dealing " + eclipseStrikeDmg + " damage to the enemy. Can only be used while Veil of Shadows counters are on you.");
         Console.WriteLine("3. Whispers of the Abyss - Summons mysterious voices from the darkness, healing you for " + whispersOfTheAbyssHeal + " hit points, but you lose your turn.");
-        Console.WriteLine("4. Shadow Pact - The forces of darkness enhance your attack spells, increasing their power by " + shadowPactIncDmg + " when you have Shadow Pact are counters on you, but you lose your turn and lose " + shadowPactCost + " hit points.");
+        Console.WriteLine("4. Shadow Pact - The forces of darkness enhance your attack spells, increasing their power by " + shadowPactIncDmg + " times the base damage when you have Shadow Pact counters on you, but you lose your turn and lose " + shadowPactCost + " hit points.");
         Console.WriteLine("You engage in battle, choose a spell number.");
 
         while (bossHp > 0 && heroHp > 0)
@@ -48,7 +49,7 @@ class Program
                     case "1":
                         if (heroHp > veilOfShadowsCost)
                         {
-                            Console.WriteLine("You casted Veil of Shadows. You lose " + shadowPactCost + " hp, but now you have this and next 3 turns where Demon attacks will be weaker.");
+                            Console.WriteLine("You casted Veil of Shadows. You lose " + veilOfShadowsCost + " hp, but now you have this and next 3 turns where Demon attacks will be weaker.");
                             heroHp -= veilOfShadowsCost;
                             veilOfShadowsCounter = 3;
                             validChoise = true;
@@ -83,7 +84,7 @@ class Program
                         break;
 
                     case "3":
-                        if (heroFullHp == heroHp)
+                        if (heroHp == heroFullHp)
                         {
                             Console.WriteLine("You have maximum HP, you don't need to heal.");
                         }
@@ -92,7 +93,6 @@ class Program
                             heroHp += whispersOfTheAbyssHeal;
                             if (heroHp > heroFullHp)
                             {
-                                Console.WriteLine("You casted Whispers of the Abyss. The whispers of dark voices heal you.");
                                 heroHp = heroFullHp;
                                 if (veilOfShadowsCounter > 0)
                                 {
@@ -100,6 +100,15 @@ class Program
                                 }
                                 validChoise = true;
                             }
+                            else
+                            {
+                                if (veilOfShadowsCounter > 0)
+                                {
+                                    veilOfShadowsCounter -= 1;
+                                }
+                                validChoise = true;
+                            }
+                            Console.WriteLine("You casted Whispers of the Abyss. The whispers of dark voices heal you.");
                         }
                         break;
 
