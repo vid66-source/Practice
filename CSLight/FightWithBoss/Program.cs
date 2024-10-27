@@ -26,8 +26,8 @@ class Program
 
         heroFullHp = heroHp;
 
-        Console.WriteLine("You, the mighty shadow wizard, enter the cave. You see two blood-red eyes gleaming from the darkness, watching you hungrily." +
-        " A creature emerges from the shadows, born from the most horrific and cruel depths of hell.\nThis Demon has " + bossHp + " hit points and deals " + bossDmg + " damage.\n" +
+        Console.WriteLine("\nYou, the mighty shadow wizard, enter the cave. You see two blood-red eyes gleaming from the darkness, watching you hungrily.\n" +
+        "A creature emerges from the shadows, born from the most horrific and cruel depths of hell.\nThis Demon has " + bossHp + " hit points and deals " + bossDmg + " damage.\n" +
         "You have " + heroHp + " hit points and 4 spells:");
 
         Console.WriteLine("1. Veil of Shadows - Shadows cloak you, reducing the damage taken by " + veilOfShadowsDodge + " for this and the next 3 turns, at the cost of " + veilOfShadowsCost + " hit points, but you lose your turn.");
@@ -143,21 +143,21 @@ class Program
             else if (heroHp > 0 && bossHp > 0 && veilOfShadowsCounter == 0)
             {
                 heroHp -= bossDmg;
-                Console.WriteLine("Demon attacks you. You gained " + bossDmg + " damage.");
+                Console.WriteLine("Demon attacks you. You take " + bossDmg + " damage.");
             }
             if (bossHp > 0 && heroHp > 0)
             {
                 Console.WriteLine("Hero has " + heroHp + " hp, " + veilOfShadowsCounter + " Veil of Shadows and " +
                 shadowPactCounter + " Shadow Pact counters. Demon Boss has " + bossHp + " hp.");
             }
-        }
-        if (bossHp <= 0)
-        {
-            Console.WriteLine("Demon defeated. Glorious victory.");
-        }
-        else if (heroHp <= 0)
-        {
-            Console.WriteLine("You lost. The Demon is eating your dead body. Disgraceful defeat.");
+            else if (bossHp <= 0)
+            {
+                Console.WriteLine("The shadows devour the Demon as it crumbles into dust. Glorious victory.");
+            }
+            else if (heroHp <= 0)
+            {
+                Console.WriteLine("You lost. The Demon is eating your dead body. Disgraceful defeat.");
+            }
         }
     }
 }
