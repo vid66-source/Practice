@@ -15,8 +15,9 @@ namespace ArrayPractice1
             {
                 for (int j = 0; j < ints.GetLength(1); j++)
                 {
-                    Console.WriteLine(ints[i, j]);
+                    Console.Write(ints[i, j] + " ");
                 }
+                Console.WriteLine();
             }
         }
     }
