@@ -1,0 +1,31 @@
+# Конфігураційні файли середовища розробки
+.vscode/
+.idea/
+**/*.suo
+**/*.user
+**/*.userosscache
+**/*.sln.docstates
+
+**/bin/
+**/obj/
+**/*.nuget.g.props
+**/*.nuget.g.targets
+
+# Файли, генеровані NuGet
+**/*.nupkg
+**/*.snupkg
+**/*.nuspec
+
+# Локальні конфігурації MSBuild
+**/*.csproj.user
+
+# Лог-файли
+**/*.log
+
+# Пакети
+packages/
+
+# Тимчасові файли
+**/*.tmp
+**/*.bak
+**/*.swp
