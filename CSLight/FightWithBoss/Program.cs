@@ -159,5 +159,6 @@ class Program
                 Console.WriteLine("You lost. The Demon is eating your dead body. Disgraceful defeat.");
             }
         }
+        Console.ReadKey();
     }
 }
