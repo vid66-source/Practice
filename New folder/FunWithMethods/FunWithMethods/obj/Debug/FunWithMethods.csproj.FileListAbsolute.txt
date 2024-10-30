@@ -1,8 +1,0 @@
-I:\BookPractice\FunWithMethods\FunWithMethods\obj\Debug\FunWithMethods.csproj.AssemblyReference.cache
-I:\BookPractice\FunWithMethods\FunWithMethods\obj\Debug\FunWithMethods.csproj.CoreCompileInputs.cache
-I:\BookPractice\FunWithMethods\FunWithMethods\bin\Debug\FunWithMethods.exe
-I:\BookPractice\FunWithMethods\FunWithMethods\bin\Debug\FunWithMethods.pdb
-I:\BookPractice\FunWithMethods\FunWithMethods\obj\Debug\FunWithMethods.exe
-I:\BookPractice\FunWithMethods\FunWithMethods\obj\Debug\FunWithMethods.pdb
-I:\BookPractice\FunWithMethods\FunWithMethods\obj\Debug\Interop.COLOADERLib.dll
-I:\BookPractice\FunWithMethods\FunWithMethods\obj\Debug\FunWithMethods.csproj.ResolveComReference.cache

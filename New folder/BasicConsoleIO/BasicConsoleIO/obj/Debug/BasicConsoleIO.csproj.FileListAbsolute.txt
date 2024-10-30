@@ -1,6 +1,0 @@
-I:\BookPractice\BasicConsoleIO\BasicConsoleIO\bin\Debug\BasicConsoleIO.exe
-I:\BookPractice\BasicConsoleIO\BasicConsoleIO\bin\Debug\BasicConsoleIO.pdb
-I:\BookPractice\BasicConsoleIO\BasicConsoleIO\obj\Debug\BasicConsoleIO.csproj.AssemblyReference.cache
-I:\BookPractice\BasicConsoleIO\BasicConsoleIO\obj\Debug\BasicConsoleIO.csproj.CoreCompileInputs.cache
-I:\BookPractice\BasicConsoleIO\BasicConsoleIO\obj\Debug\BasicConsoleIO.exe
-I:\BookPractice\BasicConsoleIO\BasicConsoleIO\obj\Debug\BasicConsoleIO.pdb
