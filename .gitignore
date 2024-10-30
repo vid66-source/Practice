@@ -1,23 +1,31 @@
-**/build/
-**/output/
+# Конфігураційні файли середовища розробки
+.vscode/
+.idea/
+**/*.suo
+**/*.user
+**/*.userosscache
+**/*.sln.docstates
 
-# Ігнорувати конкретні файли .dll в підпапках
-**/*.dll
-
-# Ігнорувати кеш файли
-**/*.cache
-
-# Ignore all build artifacts in any directory
 **/bin/
 **/obj/
-**/build/
+**/*.nuget.g.props
+**/*.nuget.g.targets
 
-# Ignore specific file types in any directory
-**/*.pdb
-**/*.exe
-**/*.cache
-**/*.json
+# Файли, генеровані NuGet
+**/*.nupkg
+**/*.snupkg
+**/*.nuspec
 
-# Ignore AssemblyInfo.cs in any directory
-**/AssemblyInfo.cs
-CSLight/FightWithBoss/obj/Debug/net8.0/FightWithBoss.AssemblyInfo.cs
+# Локальні конфігурації MSBuild
+**/*.csproj.user
+
+# Лог-файли
+**/*.log
+
+# Пакети
+packages/
+
+# Тимчасові файли
+**/*.tmp
+**/*.bak
+**/*.swp
