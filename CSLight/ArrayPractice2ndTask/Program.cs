@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ArraysPractice;
+namespace ArraysPractice2ndTask;
 
 class Program
 {
