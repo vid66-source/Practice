@@ -11,6 +11,7 @@ class Program
     {
         Random rand = new Random();
 
+        int arrayElement = 0;
         int maxInt = 0;
 
         int[,] ints = new int[10, 10];
@@ -20,9 +21,19 @@ class Program
             for (int j = 0; j < ints.GetLength(1); j++)
             {
                 ints[i, j] = rand.Next(0, 100);
+                if (j == 5)
+                {
+                    ints[i, j] = rand.Next(100, 1000);
+                }
                 Console.Write(ints[i, j] + " ");
+                arrayElement = ints[i, j];
+                if (arrayElement > maxInt)
+                {
+                    maxInt = arrayElement;
+                }
             }
             Console.WriteLine();
         }
+        Console.WriteLine("The largest number of the array is equal to " + maxInt);
     }
 }
