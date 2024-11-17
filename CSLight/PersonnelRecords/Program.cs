@@ -7,7 +7,8 @@ class Program
 
         string[] fullNames = new string[0];
         string[] workPositions = new string[0];
-        string newFullName;
+        string newName;
+        string newSurname;
         string newPosition;
 
         bool isRunning = true;
@@ -35,20 +36,23 @@ class Program
             {
                 case "1":
                     Console.SetCursorPosition(0, 0);
-                    Console.WriteLine("Enter full name");
-                    newFullName = Console.ReadLine();
-                    AddNewName(fullNames, newFullName, out fullNames);
-                    Console.WriteLine("Enter position");
+                    Console.WriteLine("Enter name:");
+                    newName = Console.ReadLine();
+                    Console.WriteLine("Enter surname:");
+                    newSurname = Console.ReadLine();
+                    AddNewName(fullNames, newName, newSurname, out fullNames);
+                    Console.WriteLine("Enter position:");
                     newPosition = Console.ReadLine();
                     AddNewPosition(workPositions, newPosition, out workPositions);
                     Console.Clear();
                     break;
                 case "2":
                     Console.SetCursorPosition(0, 0);
-                    Console.WriteLine("Dossiers list");
+                    Console.WriteLine("Dossiers list:");
                     ShowAllDossiers(fullNames, workPositions);
                     break;
                 case "3":
+
                     break;
                 case "4":
                     break;
@@ -58,7 +62,7 @@ class Program
             }
         }
 
-        static string[] AddNewName(string[] fullNames, string newFullName, out string[] newFullNamesArray)
+        static string[] AddNewName(string[] fullNames, string newFullName, string newSurname, out string[] newFullNamesArray)
         {
             string[] fullNamesTemp = new string[fullNames.Length + 1];
 
@@ -67,7 +71,7 @@ class Program
                 fullNamesTemp[i] = fullNames[i];
             }
 
-            fullNamesTemp[fullNamesTemp.Length - 1] = newFullName;
+            fullNamesTemp[fullNamesTemp.Length - 1] = $"{newFullName} {newSurname}";
 
             newFullNamesArray = fullNamesTemp;
 
@@ -90,12 +94,30 @@ class Program
             return newWorkPositionArray;
         }
 
-        static void ShowAllDossiers(string[] fullNames, string[] positions)
+        static void ShowAllDossiers(string[] fullNames, string[] workPositions)
         {
             for (int i = 0; i < fullNames.Length; i++)
             {
-                Console.Write($"{i + 1}. {fullNames[i]} - {positions[i]} ");
+                Console.Write($"{i + 1}. {fullNames[i]} - {workPositions[i]} ");
             }
+        }
+
+        static string[] DeleteDossier(int dossierNum, string[] fullNames, string[] workPositions, out newfullNamesArray, out newWorkPositionsArray)
+        {
+            string[] fullNamesTemp = new string[fullNames.Length - 1];
+
+            for (int i = 0; i < fullNames.Length; i++)
+            {
+                fullNamesTemp[i] = fullNames[i];
+                if (i == dossierNum--)
+                {
+                    break;
+                }
+            }
+            
+            newfullNamesArray = fullNamesTemp;
+
+            return newfullNamesArray;
         }
     }
 }
