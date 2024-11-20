@@ -27,8 +27,6 @@ class Program
             Please select an option:
             """;
 
-
-
         while (isRunning)
         {
             Console.SetCursorPosition(0, 15);
@@ -42,57 +40,39 @@ class Program
                     newName = Console.ReadLine();
                     Console.WriteLine("Enter surname:");
                     newSurname = Console.ReadLine();
-                    AddNewName(fullNames, newName, newSurname, out fullNames);
+                    fullNames = AddNewElement(fullNames, $"{newName} {newSurname}");
                     Console.WriteLine("Enter position:");
                     newPosition = Console.ReadLine();
-                    AddNewPosition(workPositions, newPosition, out workPositions);
-                    Console.WriteLine("\nPress Enter to choose another option");
-                    Console.ReadKey();
-                    Console.Clear();
+                    workPositions = AddNewElement(workPositions, newPosition);
+                    WaitingUserInput();
                     break;
                 case "2":
-                    if (fullNames.Length == 0 && workPositions.Length == 0)
-                    {
-                        Console.SetCursorPosition(0, 0);
-                        Console.WriteLine("There are no dossiers.");
-                        Console.WriteLine("\n\nPress Enter to choose another option");
-                        Console.ReadKey();
-                        Console.Clear();
-                    }
-                    else
-                    {
-                        Console.SetCursorPosition(0, 0);
-                        Console.WriteLine("Dossiers list:");
-                        ShowAllDossiers(fullNames, workPositions);
-                        Console.WriteLine("\n\nPress Enter to choose another option");
-                        Console.ReadKey();
-                        Console.Clear();
-                    }
+                    Console.SetCursorPosition(0, 0);
+                    Console.WriteLine("Dossiers list:");
+                    ShowAllDossiers(fullNames, workPositions);
+                    WaitingUserInput();
                     break;
                 case "3":
                     Console.SetCursorPosition(0, 0);
                     Console.WriteLine("Enter dossier number.");
-                    dossierNum = Convert.ToInt32(Console.ReadLine());
-                    if (fullNames.Length > 0 && workPositions.Length > 0)
+                    dossierNum = Convert.ToInt32(Console.ReadLine()) - 1;
+                    if (dossierNum >= 0 && dossierNum < fullNames.Length && dossierNum < workPositions.Length)
                     {
-                        DeleteDossier(dossierNum, fullNames, workPositions, out fullNames, out workPositions);
+                        fullNames = DeleteElement(dossierNum, fullNames);
+                        workPositions = DeleteElement(dossierNum, workPositions);
                     }
                     else
                     {
-                        Console.WriteLine("There is no dossiers to delete.");
+                        Console.WriteLine("Invalid index. Please enter a valid dossier number.");
                     }
-                    Console.WriteLine("\nPress Enter to choose another option");
-                    Console.ReadKey();
-                    Console.Clear();
+                    WaitingUserInput();
                     break;
                 case "4":
                     Console.SetCursorPosition(0, 0);
                     Console.WriteLine("Please enter employee surname");
                     surname = Console.ReadLine();
                     FindDossier(fullNames, workPositions, surname);
-                    Console.WriteLine("\nPress Enter to choose another option");
-                    Console.ReadKey();
-                    Console.Clear();
+                    WaitingUserInput();
                     break;
                 case "5":
                     isRunning = false;
@@ -100,122 +80,71 @@ class Program
             }
         }
 
-        static string[] AddNewName(string[] names, string newFullName, string newSurname, out string[] newFullNamesArray)
+        static string[] AddNewElement(string[] array, string newElement)
         {
-            string[] fullNamesTemp = new string[names.Length + 1];
+            string[] arrayTemp = new string[array.Length + 1];
 
-            for (int i = 0; i < names.Length; i++)
+            for (int i = 0; i < array.Length; i++)
             {
-                fullNamesTemp[i] = names[i];
+                arrayTemp[i] = array[i];
             }
 
-            fullNamesTemp[fullNamesTemp.Length - 1] = $"{newFullName} {newSurname}";
+            arrayTemp[arrayTemp.Length - 1] = newElement;
 
-            newFullNamesArray = fullNamesTemp;
-
-            return newFullNamesArray;
-        }
-
-        static string[] AddNewPosition(string[] positions, string newPosition, out string[] newWorkPositionArray)
-        {
-            string[] workPositionsTemp = new string[positions.Length + 1];
-
-            for (int i = 0; i < positions.Length; i++)
-            {
-                workPositionsTemp[i] = positions[i];
-            }
-
-            workPositionsTemp[workPositionsTemp.Length - 1] = newPosition;
-
-            newWorkPositionArray = workPositionsTemp;
-
-            return newWorkPositionArray;
+            return arrayTemp;
         }
 
         static void ShowAllDossiers(string[] fullNames, string[] workPositions)
         {
+            if (fullNames.Length == 0)
+            {
+                Console.WriteLine("There are no dossiers.");
+                return;
+            }
+
             for (int i = 0; i < fullNames.Length; i++)
             {
                 Console.Write($"{i + 1}. {fullNames[i]} - {workPositions[i]} ");
             }
         }
 
-        static void DeleteDossier(int dossierNum, string[] names, string[] positions, out string[] newfullNamesArray, out string[] newWorkPositionsArray)
+        static string[] DeleteElement(int index, string[] array)
         {
-            string[] fullNamesTemp = new string[names.Length - 1];
-
-            if (dossierNum == names.Length)
+            string[] arrayTemp = new string[array.Length - 1];
+            
+            for (int i = 0, j = 0; i < array.Length; i++)
             {
-                for (int i = 0; i < fullNamesTemp.Length; i++)
+                if (i != index)
                 {
-                    fullNamesTemp[i] = names[i];
+                    arrayTemp[j++] = array[i];
                 }
             }
-            else if (dossierNum < names.Length && dossierNum > 0)
-            {
-                for (int i = 0; i < fullNamesTemp.Length; i++)
-                {
-                    if ((dossierNum - 1) == i)
-                    {
-                        fullNamesTemp[i] = names[i + 1];
-                    }
-                    else
-                    {
-                        fullNamesTemp[i] = names[i];
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("Wrong dossier number.");
-            }
 
-            newfullNamesArray = fullNamesTemp;
-
-            string[] workPositionsTemp = new string[positions.Length - 1];
-
-            if (dossierNum == positions.Length)
-            {
-                for (int i = 0; i < workPositionsTemp.Length; i++)
-                {
-                    workPositionsTemp[i] = positions[i];
-                }
-            }
-            else if (dossierNum < names.Length && dossierNum > 0)
-            {
-                for (int i = 0; i < workPositionsTemp.Length; i++)
-                {
-                    if ((dossierNum - 1) == i)
-                    {
-                        workPositionsTemp[i] = positions[i + 1];
-                    }
-                    else
-                    {
-                        workPositionsTemp[i] = positions[i];
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("Wrong dossier number.");
-            }
-
-            newWorkPositionsArray = workPositionsTemp;
+            return arrayTemp;
         }
 
         static void FindDossier(string[] names, string[] positions, string surname)
         {
+            bool found = false;
             for (int i = 0; i < names.Length; i++)
             {
                 if (names[i].ToLower().Contains(surname.ToLower()))
                 {
                     Console.WriteLine($"{i + 1}. {names[i]} - {positions[i]}.");
-                }
-                else
-                {
-                    Console.WriteLine("There is no such employee.");
+                    found = true;
                 }
             }
+            if (!found)
+            {
+                Console.WriteLine("There is no such employee.");
+            }
+        }
+
+        static void WaitingUserInput()
+        {
+            Console.WriteLine("\nPress Enter to choose another option");
+            Console.ReadKey();
+            Console.Clear();
         }
     }
 }
