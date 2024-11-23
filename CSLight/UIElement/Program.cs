@@ -4,11 +4,10 @@ namespace UIElement;
 
 class Program
 {
-    static string input = null;
-    static int barPercent;
-
     static void Main(string[] args)
     {
+        string input = null;
+        int barPercent;
         Console.Write("Enter %(from 0 to 100). The number must be a multiple of ten:");
         input = Console.ReadLine();
         Console.SetCursorPosition(0, 5);
