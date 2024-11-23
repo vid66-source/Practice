@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersonnelRecords", "PersonnelRecords.csproj", "{19306DD2-597D-4A33-AE2A-E33EC3A0CD5C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIElement", "..\UIElement\UIElement.csproj", "{19F8925E-6A0C-4CE2-88B1-1FE9F602A8DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{19306DD2-597D-4A33-AE2A-E33EC3A0CD5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19306DD2-597D-4A33-AE2A-E33EC3A0CD5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19306DD2-597D-4A33-AE2A-E33EC3A0CD5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19F8925E-6A0C-4CE2-88B1-1FE9F602A8DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19F8925E-6A0C-4CE2-88B1-1FE9F602A8DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19F8925E-6A0C-4CE2-88B1-1FE9F602A8DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19F8925E-6A0C-4CE2-88B1-1FE9F602A8DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
