@@ -1,185 +1,100 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
 
-namespace BraveNewWorld;
-
-class Program
+namespace BraveNewWorld
 {
-    static void Main(string[] args)
+    class Program
     {
-        Console.CursorVisible = false;
-
-        char[,] map = new char[15, 30];
-        bool isPlaying = true;
-        int heroX = 0;
-        int heroY = 0;
-        int movedY = 10;
-        int movedX = 10;
-        int applesCollected = 0;
-
-        MapVisualisation(map);
-
-        while (isPlaying)
+        static void Main(string[] args)
         {
-            heroX = movedX;
-            heroY = movedY;
-            Console.SetCursorPosition(heroX, heroY);
-            Console.Write('@');
-            HeroMovementNCollectApples(map, ref heroX, ref heroY, ref movedX, ref movedY, ref applesCollected);
-            Console.SetCursorPosition(0, 16);
-            Console.WriteLine($"You have {applesCollected} apples");
+            Console.CursorVisible = false;
+
+            char[,] map = new char[15, 30];
+            int heroX = 10, heroY = 10;
+            int applesCollected = 0;
+            bool isPlaying = true;
+
+            // Генерація карти
+            InitializeMap(map);
+            DrawMap(map);
+
+            // Головний ігровий цикл
+            while (isPlaying)
+            {
+                Console.SetCursorPosition(heroX, heroY);
+                Console.Write('@');
+
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo key = Console.ReadKey(true);
+                    int newHeroX = heroX, newHeroY = heroY;
+
+                    // Обробка руху
+                    switch (key.Key)
+                    {
+                        case ConsoleKey.UpArrow: newHeroY--; break;
+                        case ConsoleKey.DownArrow: newHeroY++; break;
+                        case ConsoleKey.LeftArrow: newHeroX--; break;
+                        case ConsoleKey.RightArrow: newHeroX++; break;
+                        case ConsoleKey.Escape: isPlaying = false; break;
+                    }
+
+                    // Перевірка і взаємодія з картою
+                    if (IsWalkable(map, newHeroX, newHeroY))
+                    {
+                        if (map[newHeroY, newHeroX] == '.')
+                        {
+                            applesCollected++;
+                        }
+
+                        // Оновлення карти та позиції героя
+                        Console.SetCursorPosition(heroX, heroY);
+                        Console.Write(' ');
+                        map[heroY, heroX] = ' ';
+                        heroX = newHeroX;
+                        heroY = newHeroY;
+                        map[heroY, heroX] = '@';
+                    }
+
+                    // Вивід кількості яблук
+                    Console.SetCursorPosition(0, map.GetLength(0) + 1);
+                    Console.WriteLine($"You have {applesCollected} apples.");
+                }
+            }
         }
 
-    }
-
-    static void MapVisualisation(char[,] map)
-    {
-        for (int i = 0; i < map.GetLength(0); i++)
+        static void InitializeMap(char[,] map)
         {
-            if (i == 0 || i == 14)
+            for (int i = 0; i < map.GetLength(0); i++)
             {
                 for (int j = 0; j < map.GetLength(1); j++)
                 {
-                    map[i, j] = '#';
+                    if (i == 0 || i == map.GetLength(0) - 1 || j == 0 || j == map.GetLength(1) - 1)
+                    {
+                        map[i, j] = '#'; // Стіна
+                    }
+                    else
+                    {
+                        map[i, j] = (new Random().Next(0, 10) < 2) ? '.' : ' '; // 20% шанс на яблуко
+                    }
+                }
+            }
+        }
+
+        static void DrawMap(char[,] map)
+        {
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
                     Console.Write(map[i, j]);
                 }
                 Console.WriteLine();
             }
-            else
-            {
-                for (int j = 0; j < map.GetLength(1); j++)
-                {
-                    if (j == 0 || j == 29)
-                    {
-                        map[i, j] = '#';
-                        Console.Write(map[i, j]);
-                    }
-                    else
-                    {
-                        map[i, j] = '.';
-                        Console.Write(map[i, j]);
-                    }
-                }
-                Console.WriteLine();
-            }
         }
-    }
 
-    static void HeroMovementNCollectApples(char[,] map, ref int x, ref int y, ref int dX, ref int dY, ref int apples)
-    {
-        if (Console.KeyAvailable)
+        static bool IsWalkable(char[,] map, int x, int y)
         {
-            ConsoleKeyInfo key = Console.ReadKey(true);
-            switch (key.Key)
-            {
-                case ConsoleKey.UpArrow:
-                    if (map[dY - 1, dX] == '#')
-                    {
-                        break;
-                    }
-                    else if (map[dY - 1, dX] == '.')
-                    {
-                        dX = x;
-                        dY = y - 1;
-                        map[y, x] = ' ';
-                        map[dY, dX] = ' ';
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(' ');
-                        Console.SetCursorPosition(dX, dY);
-                        Console.Write('@');
-                        apples++;
-                    }
-                    else if (map[dY - 1, dX] == ' ')
-                    {
-                        dX = x;
-                        dY = y - 1;
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(' ');
-                        Console.SetCursorPosition(dX, dY);
-                        Console.Write('@');
-                    }
-                    break;
-                case ConsoleKey.DownArrow:
-                    if (map[dY + 1, dX] == '#')
-                    {
-                        break;
-                    }
-                    else if (map[dY + 1, dX] == '.')
-                    {
-                        dX = x;
-                        dY = y + 1;
-                        map[y, x] = ' ';
-                        map[dY, dX] = ' ';
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(' ');
-                        Console.SetCursorPosition(dX, dY);
-                        Console.Write('@');
-                        apples++;
-                    }
-                    else if (map[dY + 1, dX] == ' ')
-                    {
-                        dX = x;
-                        dY = y + 1;
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(' ');
-                        Console.SetCursorPosition(dX, dY);
-                        Console.Write('@');
-                    }
-                    break;
-                case ConsoleKey.LeftArrow:
-                    if (map[dY, dX - 1] == '#')
-                    {
-                        break;
-                    }
-                    else if (map[dY, dX - 1] == '.')
-                    {
-                        dX = x - 1;
-                        dY = y;
-                        map[y, x] = ' ';
-                        map[dY, dX] = ' ';
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(' ');
-                        Console.SetCursorPosition(dX, dY);
-                        Console.Write('@');
-                        apples++;
-                    }
-                    else if (map[dY, dX - 1] == ' ')
-                    {
-                        dX = x - 1;
-                        dY = y;
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(' ');
-                        Console.SetCursorPosition(dX, dY);
-                        Console.Write('@');
-                    }
-                    break;
-                case ConsoleKey.RightArrow:
-                    if (map[dY, dX + 1] == '#')
-                    {
-                        break;
-                    }
-                    else if (map[dY, dX + 1] == '.')
-                    {
-                        dX = x + 1;
-                        dY = y;
-                        map[y, x] = ' ';
-                        map[dY, dX] = ' ';
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(' ');
-                        Console.SetCursorPosition(dX, dY);
-                        Console.Write('@');
-                        apples++;
-                    }
-                    else if (map[dY, dX + 1] == ' ')
-                    {
-                        dX = x + 1;
-                        dY = y;
-                        Console.SetCursorPosition(x, y);
-                        Console.Write(' ');
-                        Console.SetCursorPosition(dX, dY);
-                        Console.Write('@');
-                    }
-                    break;
-            }
+            return map[y, x] != '#'; // Можна ходити, якщо це не стіна
         }
     }
 }
