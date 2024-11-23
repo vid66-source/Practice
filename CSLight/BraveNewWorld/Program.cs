@@ -24,7 +24,9 @@ class Program
             heroY = movedY;
             Console.SetCursorPosition(heroX, heroY);
             Console.Write('@');
-            HeroMovement(map, ref heroX, ref heroY, ref movedX, ref movedY);
+            HeroMovementNCollectApples(map, ref heroX, ref heroY, ref movedX, ref movedY, ref applesCollected);
+            Console.SetCursorPosition(0, 16);
+            Console.WriteLine($"You have {applesCollected} apples");
         }
 
     }
@@ -62,7 +64,7 @@ class Program
         }
     }
 
-    static void HeroMovement(char[,] map, ref int x, ref int y, ref int dX, ref int dY)
+    static void HeroMovementNCollectApples(char[,] map, ref int x, ref int y, ref int dX, ref int dY, ref int apples)
     {
         if (Console.KeyAvailable)
         {
@@ -74,7 +76,7 @@ class Program
                     {
                         break;
                     }
-                    else
+                    else if (map[dY - 1, dX] == '.')
                     {
                         dX = x;
                         dY = y - 1;
@@ -84,14 +86,24 @@ class Program
                         Console.Write(' ');
                         Console.SetCursorPosition(dX, dY);
                         Console.Write('@');
-                        break;
+                        apples++;
                     }
+                    else if (map[dY - 1, dX] == ' ')
+                    {
+                        dX = x;
+                        dY = y - 1;
+                        Console.SetCursorPosition(x, y);
+                        Console.Write(' ');
+                        Console.SetCursorPosition(dX, dY);
+                        Console.Write('@');
+                    }
+                    break;
                 case ConsoleKey.DownArrow:
                     if (map[dY + 1, dX] == '#')
                     {
                         break;
                     }
-                    else
+                    else if (map[dY + 1, dX] == '.')
                     {
                         dX = x;
                         dY = y + 1;
@@ -101,14 +113,24 @@ class Program
                         Console.Write(' ');
                         Console.SetCursorPosition(dX, dY);
                         Console.Write('@');
-                        break;
+                        apples++;
                     }
+                    else if (map[dY + 1, dX] == ' ')
+                    {
+                        dX = x;
+                        dY = y + 1;
+                        Console.SetCursorPosition(x, y);
+                        Console.Write(' ');
+                        Console.SetCursorPosition(dX, dY);
+                        Console.Write('@');
+                    }
+                    break;
                 case ConsoleKey.LeftArrow:
                     if (map[dY, dX - 1] == '#')
                     {
                         break;
                     }
-                    else
+                    else if (map[dY, dX - 1] == '.')
                     {
                         dX = x - 1;
                         dY = y;
@@ -118,14 +140,24 @@ class Program
                         Console.Write(' ');
                         Console.SetCursorPosition(dX, dY);
                         Console.Write('@');
-                        break;
+                        apples++;
                     }
+                    else if (map[dY, dX - 1] == ' ')
+                    {
+                        dX = x - 1;
+                        dY = y;
+                        Console.SetCursorPosition(x, y);
+                        Console.Write(' ');
+                        Console.SetCursorPosition(dX, dY);
+                        Console.Write('@');
+                    }
+                    break;
                 case ConsoleKey.RightArrow:
                     if (map[dY, dX + 1] == '#')
                     {
                         break;
                     }
-                    else
+                    else if (map[dY, dX + 1] == '.')
                     {
                         dX = x + 1;
                         dY = y;
@@ -135,24 +167,19 @@ class Program
                         Console.Write(' ');
                         Console.SetCursorPosition(dX, dY);
                         Console.Write('@');
-                        break;
+                        apples++;
                     }
+                    else if (map[dY, dX + 1] == ' ')
+                    {
+                        dX = x + 1;
+                        dY = y;
+                        Console.SetCursorPosition(x, y);
+                        Console.Write(' ');
+                        Console.SetCursorPosition(dX, dY);
+                        Console.Write('@');
+                    }
+                    break;
             }
         }
-    }
-
-    static int AppleCount(char[,] map, ref int apllesCount)
-    {
-        for (int i = 0; i < map.GetLength(0); i++)
-        {
-            for (int j = 0; j < map.GetLength(1); j++)
-            {
-                if (map[i, j] == ' ')
-                {
-                    apllesCount++;
-                }
-            }
-        }
-        return apllesCount;
     }
 }
