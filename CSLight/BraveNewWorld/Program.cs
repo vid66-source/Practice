@@ -13,11 +13,9 @@ namespace BraveNewWorld
             int applesCollected = 0;
             bool isPlaying = true;
 
-            // Генерація карти
             InitializeMap(map);
             DrawMap(map);
 
-            // Головний ігровий цикл
             while (isPlaying)
             {
                 Console.SetCursorPosition(heroX, heroY);
@@ -28,7 +26,6 @@ namespace BraveNewWorld
                     ConsoleKeyInfo key = Console.ReadKey(true);
                     int newHeroX = heroX, newHeroY = heroY;
 
-                    // Обробка руху
                     switch (key.Key)
                     {
                         case ConsoleKey.UpArrow: newHeroY--; break;
@@ -38,7 +35,6 @@ namespace BraveNewWorld
                         case ConsoleKey.Escape: isPlaying = false; break;
                     }
 
-                    // Перевірка і взаємодія з картою
                     if (IsWalkable(map, newHeroX, newHeroY))
                     {
                         if (map[newHeroY, newHeroX] == '.')
@@ -46,7 +42,6 @@ namespace BraveNewWorld
                             applesCollected++;
                         }
 
-                        // Оновлення карти та позиції героя
                         Console.SetCursorPosition(heroX, heroY);
                         Console.Write(' ');
                         map[heroY, heroX] = ' ';
@@ -55,7 +50,6 @@ namespace BraveNewWorld
                         map[heroY, heroX] = '@';
                     }
 
-                    // Вивід кількості яблук
                     Console.SetCursorPosition(0, map.GetLength(0) + 1);
                     Console.WriteLine($"You have {applesCollected} apples.");
                 }
@@ -70,11 +64,11 @@ namespace BraveNewWorld
                 {
                     if (i == 0 || i == map.GetLength(0) - 1 || j == 0 || j == map.GetLength(1) - 1)
                     {
-                        map[i, j] = '#'; // Стіна
+                        map[i, j] = '#';
                     }
                     else
                     {
-                        map[i, j] = (new Random().Next(0, 10) < 2) ? '.' : ' '; // 20% шанс на яблуко
+                        map[i, j] = (new Random().Next(0, 10) < 2) ? '.' : ' ';
                     }
                 }
             }
@@ -94,7 +88,7 @@ namespace BraveNewWorld
 
         static bool IsWalkable(char[,] map, int x, int y)
         {
-            return map[y, x] != '#'; // Можна ходити, якщо це не стіна
+            return map[y, x] != '#';
         }
     }
 }
