@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace BraveNewWorld
 {
@@ -17,16 +16,12 @@ namespace BraveNewWorld
 
             Random random = new Random();
             InitializeMap(map, heroX, heroY, random);
-            int randomNumX = random.Next(1, 10);
-            int randomNumY = random.Next(1, 10);
-            enemyX = randomNumX;
-            enemyY = randomNumY;
+            enemyX = random.Next(1, 10);
+            enemyY = random.Next(1, 10);
             map[enemyY, enemyX] = 'W';
             int allApples = AppleSum(map);
             int enemyMoveDelay = 3000;
             int enemyMoveCounter = 0;
-            bool wasAnApple = false;
-            bool wasASpace = true;
 
             DrawMap(map);
 
@@ -40,12 +35,11 @@ namespace BraveNewWorld
                     ConsoleKeyInfo key = Console.ReadKey(true);
                     int newHeroX = heroX, newHeroY = heroY;
 
-                    ChangeDiraction(key, ref newHeroY, ref newHeroX, ref isPlaying);
+                    ChangeDirection(key, ref newHeroY, ref newHeroX, ref isPlaying); //Вибір напрямку руху
 
                     if (IsCharacter(map, newHeroX, newHeroY, 'W'))
                     {
-                        string text = "You lost!";
-                        GameOver(map, text, ref isPlaying);
+                        GameOver(map, "You lost!", ref isPlaying);
                     }
                     else if (IsMoveable(map, newHeroX, newHeroY))
                     {
@@ -54,7 +48,7 @@ namespace BraveNewWorld
                             applesCollected++;
                         }
 
-                        Movement(map, ref heroX, ref heroY, ref newHeroX, ref newHeroY);
+                        Movement(map, ref heroX, ref heroY, ref newHeroX, ref newHeroY); //Самий рух гравця
                     }
 
                     Console.SetCursorPosition(0, map.GetLength(0) + 1);
@@ -62,8 +56,7 @@ namespace BraveNewWorld
 
                     if (applesCollected == allApples)
                     {
-                        string text = "You win!";
-                        GameOver(map, text, ref isPlaying);
+                        GameOver(map, "You win!", ref isPlaying);
                     }
                 }
 
@@ -71,17 +64,19 @@ namespace BraveNewWorld
                 if (enemyMoveCounter >= enemyMoveDelay)
                 {
                     enemyMoveCounter = 0;
-                    EnemyMovement(random, map, ref enemyX, ref enemyY, ref isPlaying, ref wasAnApple, ref wasASpace);
+                    EnemyMovement(random, map, ref enemyX, ref enemyY, ref isPlaying); // Зміна для руху ворога
                 }
             }
         }
 
-        static void EnemyMovement(Random random, char[,] map, ref int enemyX, ref int enemyY, ref bool isPlaying, ref bool wasAnApple, ref bool wasASpace)
+        static void EnemyMovement(Random random, char[,] map, ref int enemyX, ref int enemyY, ref bool isPlaying)
         {
             Console.SetCursorPosition(enemyX, enemyY);
             Console.Write('W');
+            map[enemyY, enemyX] = 'W';
             int newEnemyX = enemyX, newEnemyY = enemyY;
             int randomDirection = random.Next(1, 5);
+
             switch (randomDirection)
             {
                 case 1: newEnemyX++; break;
@@ -89,52 +84,51 @@ namespace BraveNewWorld
                 case 3: newEnemyY++; break;
                 case 4: newEnemyY--; break;
             }
+
             if (IsMoveable(map, newEnemyX, newEnemyY))
             {
-                if (IsCharacter(map, newEnemyX, newEnemyY, '.') && wasAnApple == true)
-                {
-                    EnemyMovementElement(map, ref enemyX, ref enemyY, ref newEnemyX, ref newEnemyY, '.');
-                    wasAnApple = true;
-                    wasASpace = false;
-                }
-                else if (IsCharacter(map, newEnemyX, newEnemyY, '.') && wasASpace == true)
-                {
-                    EnemyMovementElement(map, ref enemyX, ref enemyY, ref newEnemyX, ref newEnemyY, ' ');
-                    wasAnApple = true;
-                    wasASpace = false;
-                }
-                else if (IsCharacter(map, newEnemyX, newEnemyY, ' ') && wasAnApple == true)
-                {
-                    EnemyMovementElement(map, ref enemyX, ref enemyY, ref newEnemyX, ref newEnemyY, '.');
-                    wasAnApple = false;
-                    wasASpace = true;
-                }
-                else if (IsCharacter(map, newEnemyX, newEnemyY, ' ') && wasASpace == true)
-                {
-                    EnemyMovementElement(map, ref enemyX, ref enemyY, ref newEnemyX, ref newEnemyY, ' ');
-                    wasAnApple = false;
-                    wasASpace = true;
-                }
-                else if (IsCharacter(map, newEnemyX, newEnemyY, '@'))
+                char previousCell = map[newEnemyY, newEnemyX];
+
+                if (IsCharacter(map, newEnemyX, newEnemyY, '@'))
                 {
                     isPlaying = false;
                     Console.SetCursorPosition(0, map.GetLength(0) + 2);
                     Console.WriteLine("You lost!");
                     Console.ReadKey();
                 }
+                else if (IsCharacter(map, newEnemyX, newEnemyY, '.'))
+                {
+                    map[enemyY, enemyX] = ' ';
+                    Console.SetCursorPosition(enemyX, enemyY);
+                    Console.Write(' ');
+
+                    map[newEnemyY, newEnemyX] = 'W';
+                    Console.SetCursorPosition(newEnemyX, newEnemyY);
+                    Console.Write('W');
+                    enemyX = newEnemyX;
+                    enemyY = newEnemyY;
+                }
+                else if (IsCharacter(map, newEnemyX, newEnemyY, ' '))
+                {
+                    if (previousCell != '.')
+                    {
+                        map[newEnemyY, newEnemyX] = previousCell; 
+                        Console.SetCursorPosition(newEnemyX, newEnemyY);
+                        Console.Write(previousCell);
+                    }
+
+                    map[enemyY, enemyX] = ' ';
+                    Console.SetCursorPosition(enemyX, enemyY);
+                    Console.Write(' ');
+                    map[newEnemyY, newEnemyX] = 'W';
+                    Console.SetCursorPosition(newEnemyX, newEnemyY);
+                    Console.Write('W');
+                    enemyX = newEnemyX;
+                    enemyY = newEnemyY;
+                }
             }
         }
 
-        static void EnemyMovementElement(char[,] map, ref int enemyX, ref int enemyY, ref int newEnemyX, ref int newEnemyY, char symbol)
-        {
-            map[enemyY, enemyX] = symbol;
-            Console.SetCursorPosition(enemyX, enemyY);
-            Console.WriteLine(symbol);
-            map[newEnemyY, newEnemyX] = 'W';
-            Console.SetCursorPosition(newEnemyX, newEnemyY);
-            Console.WriteLine('W');
-            enemyX = newEnemyX; enemyY = newEnemyY;
-        }
         static void Movement(char[,] map, ref int x, ref int y, ref int newX, ref int newY)
         {
             Console.SetCursorPosition(x, y);
@@ -145,8 +139,7 @@ namespace BraveNewWorld
             map[y, x] = '@';
         }
 
-
-        static void ChangeDiraction(ConsoleKeyInfo key, ref int newY, ref int newX, ref bool isPlaying)
+        static void ChangeDirection(ConsoleKeyInfo key, ref int newY, ref int newX, ref bool isPlaying)
         {
             switch (key.Key)
             {
@@ -165,9 +158,8 @@ namespace BraveNewWorld
 
         static bool IsMoveable(char[,] map, int x, int y)
         {
-            return map[y, x] != '#';
+            return map[y, x] != '#'; // Перевірка, чи клітинка прохідна
         }
-
 
         static void InitializeMap(char[,] map, int x, int y, Random random)
         {
@@ -177,15 +169,15 @@ namespace BraveNewWorld
                 {
                     if (i == 0 || i == map.GetLength(0) - 1 || j == 0 || j == map.GetLength(1) - 1)
                     {
-                        map[i, j] = '#';
+                        map[i, j] = '#'; // Створення стін
                     }
                     else if (i == y && j == x)
                     {
-                        map[i, j] = '@';
+                        map[i, j] = '@'; // Місце героя
                     }
                     else
                     {
-                        map[i, j] = (random.Next(0, 10) < 2) ? '.' : ' ';
+                        map[i, j] = (random.Next(0, 10) < 2) ? '.' : ' '; // Генерація яблук на карті
                     }
                 }
             }
@@ -196,7 +188,7 @@ namespace BraveNewWorld
             isPlaying = false;
             Console.SetCursorPosition(0, map.GetLength(0) + 2);
             Console.WriteLine(text);
-            Console.ReadKey();
+            Console.ReadKey(); // Виведення повідомлення про кінець гри
         }
 
         static void DrawMap(char[,] map)
@@ -205,7 +197,7 @@ namespace BraveNewWorld
             {
                 for (int j = 0; j < map.GetLength(1); j++)
                 {
-                    Console.Write(map[i, j]);
+                    Console.Write(map[i, j]); // Виведення карти
                 }
                 Console.WriteLine();
             }
@@ -220,7 +212,7 @@ namespace BraveNewWorld
                 {
                     if (map[i, j] == '.')
                     {
-                        allApples++;
+                        allApples++; // Підрахунок кількості яблук
                     }
                 }
             }
