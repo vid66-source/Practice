@@ -22,6 +22,7 @@ namespace BraveNewWorld
             int allApples = AppleSum(map);
             int enemyMoveDelay = 3000;
             int enemyMoveCounter = 0;
+            char previousCell = ' ';
 
             DrawMap(map);
 
@@ -64,19 +65,18 @@ namespace BraveNewWorld
                 if (enemyMoveCounter >= enemyMoveDelay)
                 {
                     enemyMoveCounter = 0;
-                    EnemyMovement(random, map, ref enemyX, ref enemyY, ref isPlaying); // Зміна для руху ворога
+                    EnemyMovement(random, map, ref enemyX, ref enemyY, ref isPlaying, ref previousCell); // Зміна для руху ворога
                 }
             }
         }
 
-        static void EnemyMovement(Random random, char[,] map, ref int enemyX, ref int enemyY, ref bool isPlaying)
+        static void EnemyMovement(Random random, char[,] map, ref int enemyX, ref int enemyY, ref bool isPlaying, ref char previousCell)
         {
             Console.SetCursorPosition(enemyX, enemyY);
             Console.Write('W');
             map[enemyY, enemyX] = 'W';
             int newEnemyX = enemyX, newEnemyY = enemyY;
             int randomDirection = random.Next(1, 5);
-
             switch (randomDirection)
             {
                 case 1: newEnemyX++; break;
@@ -87,47 +87,46 @@ namespace BraveNewWorld
 
             if (IsMoveable(map, newEnemyX, newEnemyY))
             {
-                char previousCell = map[newEnemyY, newEnemyX];
 
                 if (IsCharacter(map, newEnemyX, newEnemyY, '@'))
                 {
-                    isPlaying = false;
-                    Console.SetCursorPosition(0, map.GetLength(0) + 2);
-                    Console.WriteLine("You lost!");
-                    Console.ReadKey();
+                    GameOver(map, "You lost!", ref isPlaying);
                 }
-                else if (IsCharacter(map, newEnemyX, newEnemyY, '.'))
+                else if (IsCharacter(map, newEnemyX, newEnemyY, '.') && previousCell == ' ')
                 {
-                    map[enemyY, enemyX] = ' ';
-                    Console.SetCursorPosition(enemyX, enemyY);
-                    Console.Write(' ');
-
-                    map[newEnemyY, newEnemyX] = 'W';
-                    Console.SetCursorPosition(newEnemyX, newEnemyY);
-                    Console.Write('W');
-                    enemyX = newEnemyX;
-                    enemyY = newEnemyY;
+                    EnemyMovementElement(map, ref enemyX, ref enemyY, ref newEnemyX, ref newEnemyY, ' ');
+                    previousCell = '.';
                 }
-                else if (IsCharacter(map, newEnemyX, newEnemyY, ' '))
+                else if (IsCharacter(map, newEnemyX, newEnemyY, '.') && previousCell == '.')
                 {
-                    if (previousCell != '.')
-                    {
-                        map[newEnemyY, newEnemyX] = previousCell; 
-                        Console.SetCursorPosition(newEnemyX, newEnemyY);
-                        Console.Write(previousCell);
-                    }
-
-                    map[enemyY, enemyX] = ' ';
-                    Console.SetCursorPosition(enemyX, enemyY);
-                    Console.Write(' ');
-                    map[newEnemyY, newEnemyX] = 'W';
-                    Console.SetCursorPosition(newEnemyX, newEnemyY);
-                    Console.Write('W');
-                    enemyX = newEnemyX;
-                    enemyY = newEnemyY;
+                    EnemyMovementElement(map, ref enemyX, ref enemyY, ref newEnemyX, ref newEnemyY, '.');
+                    previousCell = '.';
+                }
+                else if (IsCharacter(map, newEnemyX, newEnemyY, ' ') && previousCell == ' ')
+                {
+                    EnemyMovementElement(map, ref enemyX, ref enemyY, ref newEnemyX, ref newEnemyY, ' ');
+                    previousCell = ' ';
+                }
+                else if (IsCharacter(map, newEnemyX, newEnemyY, ' ') && previousCell == '.')
+                {
+                    EnemyMovementElement(map, ref enemyX, ref enemyY, ref newEnemyX, ref newEnemyY, '.');
+                    previousCell = ' ';
                 }
             }
         }
+
+        static void EnemyMovementElement(char[,] map, ref int enemyX, ref int enemyY, ref int newEnemyX, ref int newEnemyY, char symbol)
+        {
+            map[enemyY, enemyX] = symbol;
+            Console.SetCursorPosition(enemyX, enemyY);
+            Console.WriteLine(symbol);
+            map[newEnemyY, newEnemyX] = 'W';
+            Console.SetCursorPosition(newEnemyX, newEnemyY);
+            Console.WriteLine('W');
+            enemyX = newEnemyX;
+            enemyY = newEnemyY;
+        }
+
 
         static void Movement(char[,] map, ref int x, ref int y, ref int newX, ref int newY)
         {
