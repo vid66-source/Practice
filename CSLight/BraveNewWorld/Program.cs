@@ -13,6 +13,7 @@ namespace BraveNewWorld
             int applesCollected = 0;
             bool isPlaying = true;
 
+
             InitializeMap(map);
             DrawMap(map);
 
@@ -26,14 +27,7 @@ namespace BraveNewWorld
                     ConsoleKeyInfo key = Console.ReadKey(true);
                     int newHeroX = heroX, newHeroY = heroY;
 
-                    switch (key.Key)
-                    {
-                        case ConsoleKey.UpArrow: newHeroY--; break;
-                        case ConsoleKey.DownArrow: newHeroY++; break;
-                        case ConsoleKey.LeftArrow: newHeroX--; break;
-                        case ConsoleKey.RightArrow: newHeroX++; break;
-                        case ConsoleKey.Escape: isPlaying = false; break;
-                    }
+                    ChangeDiraction(key, ref newHeroY, ref newHeroX, isPlaying);
 
                     if (IsWalkable(map, newHeroX, newHeroY))
                     {
@@ -42,19 +36,39 @@ namespace BraveNewWorld
                             applesCollected++;
                         }
 
-                        Console.SetCursorPosition(heroX, heroY);
-                        Console.Write(' ');
-                        map[heroY, heroX] = ' ';
-                        heroX = newHeroX;
-                        heroY = newHeroY;
-                        map[heroY, heroX] = '@';
+                        MoveMent(map, ref heroX, ref heroY, ref newHeroX, ref newHeroY);
                     }
 
                     Console.SetCursorPosition(0, map.GetLength(0) + 1);
                     Console.WriteLine($"You have {applesCollected} apples.");
                 }
+
             }
         }
+
+        static void MoveMent(char[,] map, ref int x, ref int y, ref int newX, ref int newY)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.Write(' ');
+            map[y, x] = ' ';
+            x = newX;
+            y = newY;
+            map[y, x] = '@';
+        }
+
+
+        static void ChangeDiraction(ConsoleKeyInfo key, ref int newY, ref int newX, bool isPlaying)
+        {
+            switch (key.Key)
+            {
+                case ConsoleKey.UpArrow: newY--; break;
+                case ConsoleKey.DownArrow: newY++; break;
+                case ConsoleKey.LeftArrow: newX--; break;
+                case ConsoleKey.RightArrow: newX++; break;
+                case ConsoleKey.Escape: isPlaying = false; break;
+            }
+        }
+
 
         static void InitializeMap(char[,] map)
         {
