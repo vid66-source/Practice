@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace BraveNewWorld
 {
@@ -10,17 +11,22 @@ namespace BraveNewWorld
 
             char[,] map = new char[15, 30];
             int heroX = 10, heroY = 10;
+            int enemyX = 1, enemyY = 1;
             int applesCollected = 0;
+            int allApples;
             bool isPlaying = true;
 
-
-            InitializeMap(map);
+            InitializeMap(map, heroX, heroY);
+            map[enemyX, enemyY] = 'W';
+            allApples = AppleSum(map);
             DrawMap(map);
 
             while (isPlaying)
             {
                 Console.SetCursorPosition(heroX, heroY);
                 Console.Write('@');
+                Console.SetCursorPosition(enemyX, enemyY);
+                Console.Write('W');
 
                 if (Console.KeyAvailable)
                 {
@@ -29,24 +35,33 @@ namespace BraveNewWorld
 
                     ChangeDiraction(key, ref newHeroY, ref newHeroX, isPlaying);
 
-                    if (IsWalkable(map, newHeroX, newHeroY))
+                    if (IsEnemy(map, newHeroX, newHeroY))
+                    {
+                        string text = "You lost!";
+                        EndOfTheGame(map, text, ref isPlaying);
+                    }
+                    else if (IsWalkable(map, newHeroX, newHeroY))
                     {
                         if (map[newHeroY, newHeroX] == '.')
                         {
                             applesCollected++;
                         }
 
-                        MoveMent(map, ref heroX, ref heroY, ref newHeroX, ref newHeroY);
+                        Movement(map, ref heroX, ref heroY, ref newHeroX, ref newHeroY);
                     }
 
                     Console.SetCursorPosition(0, map.GetLength(0) + 1);
                     Console.WriteLine($"You have {applesCollected} apples.");
                 }
-
+                else if (applesCollected == allApples)
+                {
+                    string text = "You win!";
+                    EndOfTheGame(map, text, ref isPlaying);
+                }
             }
         }
 
-        static void MoveMent(char[,] map, ref int x, ref int y, ref int newX, ref int newY)
+        static void Movement(char[,] map, ref int x, ref int y, ref int newX, ref int newY)
         {
             Console.SetCursorPosition(x, y);
             Console.Write(' ');
@@ -69,8 +84,19 @@ namespace BraveNewWorld
             }
         }
 
+        static bool IsWalkable(char[,] map, int x, int y)
+        {
+            return map[y, x] != '#';
+        }
 
-        static void InitializeMap(char[,] map)
+        static bool IsEnemy(char[,] map, int x, int y)
+        {
+            return map[y, x] == 'W';
+        }
+
+
+
+        static void InitializeMap(char[,] map, int x, int y)
         {
             for (int i = 0; i < map.GetLength(0); i++)
             {
@@ -80,12 +106,24 @@ namespace BraveNewWorld
                     {
                         map[i, j] = '#';
                     }
+                    else if (i == y && j == x)
+                    {
+                        map[i, j] = '@';
+                    }
                     else
                     {
                         map[i, j] = (new Random().Next(0, 10) < 2) ? '.' : ' ';
                     }
                 }
             }
+        }
+
+        static void EndOfTheGame(char[,] map, string text, ref bool isPlaying)
+        {
+            isPlaying = false;
+            Console.SetCursorPosition(0, map.GetLength(0) + 2);
+            Console.WriteLine(text);
+            Console.ReadKey();
         }
 
         static void DrawMap(char[,] map)
@@ -100,9 +138,20 @@ namespace BraveNewWorld
             }
         }
 
-        static bool IsWalkable(char[,] map, int x, int y)
+        static int AppleSum(char[,] map)
         {
-            return map[y, x] != '#';
+            int allApples = 0;
+            for (int i = 0; i < map.GetLength(0); i++)
+            {
+                for (int j = 0; j < map.GetLength(1); j++)
+                {
+                    if (map[i, j] == '.')
+                    {
+                        allApples++;
+                    }
+                }
+            }
+            return allApples;
         }
     }
 }
