@@ -4,28 +4,29 @@ class Program
 {
     static void Main(string[] args)
     {
-        Random random = new();
-        char[] charArray = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q'];
-        ShuffleArray(random, ref charArray);
+        var random = new Random();
+        char[] charArray = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q' };
+
+        ShuffleArray(random, charArray);
+
         for (int i = 0; i < charArray.Length; i++)
         {
             Console.Write($"{charArray[i]} ");
         }
+
         Console.ReadKey();
     }
 
-    static void ShuffleArray(Random random, ref char[] array)
+    static void ShuffleArray(Random random, char[] array)
     {
-        int randomIndex;
-        char[] shuffledArray = new char[array.Length];
-        for (int i = 0; i < array.Length; i++)
+        for (int i = array.Length - 1; i > 0; i--)
         {
-            do
-            {
-                randomIndex = random.Next(0, array.Length);
-            } while (shuffledArray[randomIndex] != '\0');
-            shuffledArray[randomIndex] = array[i];
+            int randomIndex = random.Next(0, i + 1);
+
+            // Обмін елементів
+            char temp = array[i];
+            array[i] = array[randomIndex];
+            array[randomIndex] = temp;
         }
-        array = shuffledArray;
     }
 }
