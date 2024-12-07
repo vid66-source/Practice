@@ -15,13 +15,15 @@ class Program
 
             input = Console.ReadLine();
 
-            foreach (var word in dictionary)
+            if (dictionary.ContainsKey(input))
             {
-                if (word.Key.ToLower() == input.ToLower())
-                {
-                    Console.WriteLine($"{word.Key} - {word.Value}");
-                }
+                Console.WriteLine(dictionary[input]);
             }
+            else
+            {
+                Console.WriteLine("There is no such word in dictionary.");
+            }
+
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey();
             Console.Clear();

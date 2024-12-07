@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dictionary", "Dictionary.csproj", "{DDACF1F0-A979-43AB-8C33-5E32F456E998}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "queueInAStore", "..\queueInAStore\queueInAStore.csproj", "{A6D55527-00CD-411A-9185-85F80DC3B5F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{DDACF1F0-A979-43AB-8C33-5E32F456E998}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DDACF1F0-A979-43AB-8C33-5E32F456E998}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DDACF1F0-A979-43AB-8C33-5E32F456E998}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6D55527-00CD-411A-9185-85F80DC3B5F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6D55527-00CD-411A-9185-85F80DC3B5F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6D55527-00CD-411A-9185-85F80DC3B5F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6D55527-00CD-411A-9185-85F80DC3B5F7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
