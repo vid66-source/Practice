@@ -23,13 +23,22 @@ class Program
 
     static void StoreEarnMoney(Queue<int> queue, ref int salesSum)
     {
+        int customerNumber = 1;
+
         while (queue.Count != 0)
         {
             int sale = queue.Dequeue();
             salesSum += sale;
-            Console.WriteLine($"The buyer left the amount of {sale} UAH in the cash register. At the moment, there is {salesSum} UAH in the cash register.");
+
+            Console.WriteLine($"Customer #{customerNumber} left {sale} UAH in the cash register.");
+            Console.WriteLine($"Total in the cash register: {salesSum} UAH.");
+            customerNumber++;
+
+            Console.WriteLine("\nPress any key to serve the next customer...");
             Console.ReadKey();
             Console.Clear();
         }
+
+        Console.WriteLine("All customers have been served!");
     }
 }
