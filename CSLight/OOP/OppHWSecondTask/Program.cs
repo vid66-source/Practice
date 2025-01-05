@@ -204,7 +204,7 @@ class Administrator
 
 class Player
 {
-    private static int counter = 1;
+    private static int counter;
     public int PlayerID { get; private set; }
     public string PlayerNick { get; private set; }
     public int PlayerLvl { get; private set; }
@@ -214,7 +214,7 @@ class Player
     {
         PlayerNick = playerNick;
         PlayerLvl = playerLvl;
-        PlayerID = counter++;
+        PlayerID = ++counter;
         IsBanned = false;
     }
 
