@@ -1,28 +1,36 @@
-﻿using System.ComponentModel;
-
-namespace OopHWFourthTask;
+﻿namespace OopHWFourthTask;
 
 class Program
 {
     static void Main(string[] args)
     {
-
+        if (OperatingSystem.IsWindows())
+        {
+            Console.SetWindowSize(180, 50);
+        }
+        else
+        {
+            Console.WriteLine("This feature is only supported on Windows.");
+        }
         bool storeIsOpen = true;
         Seller seller = new Seller(1000);
         Customer customer = new Customer(1200);
         Cart cart = new Cart();
         while (storeIsOpen)
         {
-            Console.SetCursorPosition(5, 0);
+            Console.SetCursorPosition(25, 0);
             Console.Write("Welcome to our store. You can see a list of our goods at the right. Add goods into the cart and then buy them!");
-            Console.SetCursorPosition(55, 1);
-            Console.Write("Store assortment");
-            Console.SetCursorPosition(55, 2);
-            Console.Write("_________________________________________________________________");
-            seller.ShowProducts(seller.SellerProducts, seller, 55, 3);
             Console.SetCursorPosition(0, 1);
-            Console.Write("Enter 1 to add any product to your cart and than enter 2 to buy that products.");
-            customer.ShowProducts(customer.CustomerProducts, customer, 0, 5);
+            Console.Write("_______________________________________________________________________________________________________________________________________");
+            Console.SetCursorPosition(78, 3);
+            Console.Write("Store assortment:");
+            Console.SetCursorPosition(78, 4);
+            Console.Write("_________________________________________________________");
+            seller.SellerShowProducts(seller.SellerProducts, seller, 78, 5);
+            Console.SetCursorPosition(0, 2);
+            Console.Write("Menu:\n1)Add any product to your cart.\n2)Purchase products in your cart.");
+            customer.CustomerShowProducts(customer.CustomerProducts, customer, 0, 5);
+
             switch (Console.ReadLine())
             {
                 case "1":
@@ -64,7 +72,7 @@ class Seller
         Money = money;
     }
 
-    public void ShowProducts(List<Product> products, Seller seller, int columnNum, int row)
+    public void SellerShowProducts(List<Product> products, Seller seller, int columnNum, int row)
     {
         foreach (Product item in products)
         {
@@ -124,7 +132,7 @@ class Customer
         }
     }
 
-    public void ShowProducts(List<Product> products, Customer customer, int columnNum, int row)
+    public void CustomerShowProducts(List<Product> products, Customer customer, int columnNum, int row)
     {
         foreach (Product item in products)
         {
@@ -179,7 +187,7 @@ class Cart
         return totalCost;
     }
 
-    public void ShowProducts(Customer customer)
+    public void CartShowProducts(Customer customer)
     {
         foreach (var item in ProductsInCart)
         {
@@ -225,11 +233,20 @@ class Product
     public void ProductShowInf(object person)
     {
         string unit = IsPieceProduct ? "pcs" : "kg";
-        string productDetails = $"Product: {ProductName}, Weight: {ProductCount} {unit}";
+        string productDetails = $"Product: {ProductName}, ";
+
+        if (IsPieceProduct)
+        {
+            productDetails += $"Quantity: {ProductCount} {unit}";
+        }
+        else
+        {
+            productDetails += $"Weight: {ProductCount} {unit}";
+        }
 
         if (person is Seller)
         {
-            productDetails += $", Price: {ProductPrice}";
+            productDetails += $", Price: {ProductPrice}.";
         }
 
         Console.Write(productDetails);
