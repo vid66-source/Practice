@@ -30,14 +30,18 @@ public static class WinUIManager
 
     public static void UIElementMenu(float xOffset, int yOffset)
     {
-        Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset);
-        Console.Write("Menu:");
-        Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset + 1);
-        Console.Write("1)Add any product to your cart.");
-        Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset + 2);
-        Console.Write("2)Purchase products in your cart.");
-        Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset + 3);
-        Console.Write("Please choose your option");
+        string[] menuItems =
+        {
+            "Menu:",
+            "1) Add any product to your cart.",
+            "2) Purchase products in your cart.",
+            "Please choose your option"
+        };
+
+        for (int i = 0; i < menuItems.Length; i++)
+        {
+            SetCursorWithScreenOffset(xOffset, yOffset + i, menuItems[i]);
+        }
     }
 
     public static void UIElementListHeadder(float xOffset, int yOffset, string text)
@@ -97,7 +101,7 @@ public static class ProductManager
         int productIndex = 0;
         for (int i = 0; i < products.Count; i++)
         {
-            if (products[i].ProductName == productName)
+            if (products[i].ProductName.ToLower() == productName.ToLower())
             {
                 productIndex = i;
                 break;
@@ -159,21 +163,11 @@ class Program
     {
         bool storeIsOpen = true;
         //store entities
-        Seller seller = new Seller(10000);
-        Customer customer = new Customer(1200);
+        Seller seller = new Seller(0);
+        Customer customer = new Customer(200);
         Cart cart = new Cart();
-
-        //UI design
-
-        if (OperatingSystem.IsWindows())
-        {
-            WinUIManager.WindowSizeOption(0.8f, 0.8f);
-        }
-        else
-        {
-            int screenWidth = 100;
-            int screenHeight = 100;
-        }
+        WinUIManager.WindowSizeOption(0.8f, 0.8f);
+        int sellerListCount = seller.SellerProducts.Count;
 
         while (storeIsOpen)
         {
@@ -182,20 +176,26 @@ class Program
             //Menu
             WinUIManager.UIElementMenu(0.1f, 2);
             //Customer
-            WinUIManager.UIElementListHeadder(0.1f, seller.SellerProducts.Count + 5, "Your Purchases:");
-            ProductManager.ShowProductsList(0.4f, 4, customer.CustomerProducts, customer);
+            WinUIManager.UIElementListHeadder(0.1f, sellerListCount + 7, "Your Purchases:");
+            ProductManager.ShowProductsList(0.1f, sellerListCount + 9, customer.CustomerProducts, customer);
+            float customerMoneyNum = customer.Money;
+            string customerMoneyNumTxt = string.Format("{0:F2}", customerMoneyNum);
+            WinUIManager.SetCursorWithScreenOffset(0.1f, sellerListCount + customer.CustomerProducts.Count + 10);
+            Console.Write($"Customer money: {customerMoneyNumTxt}$");
             //Store
             WinUIManager.UIElementListHeadder(0.5f, 2, "Store assortment:");
             ProductManager.ShowProductsList(0.5f, 4, seller.SellerProducts, seller);
             float sellerMoneyNum = seller.Money;
-            string sellerMoneyNumTxt = string.Format("{0:F2}", sellerMoneyNumTxt);
+            string sellerMoneyNumTxt = string.Format("{0:F2}", sellerMoneyNum);
+            WinUIManager.SetCursorWithScreenOffset(0.5f, sellerListCount + 5);
+            Console.Write($"Store money: {sellerMoneyNumTxt}$");
             //Cart
-            WinUIManager.UIElementListHeadder(0.5f, seller.SellerProducts.Count + 5, "Your Cart:");
-            ProductManager.ShowProductsList(0.5f, seller.SellerProducts.Count + 7, cart.CartProducts, cart);
+            WinUIManager.UIElementListHeadder(0.5f, sellerListCount + 7, "Your Cart:");
+            ProductManager.ShowProductsList(0.5f, sellerListCount + 9, cart.CartProducts, cart);
             float cartProductsSum = cart.CartProducts.Count > 0 ? cart.TotalCost() : 0;
             string cartProductsSumTxt = string.Format("{0:F2}", cartProductsSum);
-            WinUIManager.SetCursorWithScreenOffset(0.5f, seller.SellerProducts.Count + 7 + cart.CartProducts.Count);
-            Console.Write("Total cost: " + cartProductsSumTxt + "$");
+            WinUIManager.SetCursorWithScreenOffset(0.5f, sellerListCount + cart.CartProducts.Count + 10);
+            Console.Write($"Total cost: {cartProductsSumTxt}$");
             WinUIManager.SetCursorWithScreenOffset(0.1f, 6);
 
             switch (Console.ReadLine())
@@ -204,9 +204,9 @@ class Program
                     WinUIManager.SetCursorWithScreenOffset(0.1f, 7);
                     Console.Write("Enter product name: ");
                     string productName = Console.ReadLine();
-                    string weightText = seller.SellerProducts[ProductManager.DetectProductIndex(seller.SellerProducts, productName)].IsPieceProduct ? "quantity" : "weight";
+                    string amountType = seller.SellerProducts[ProductManager.DetectProductIndex(seller.SellerProducts, productName)].IsPieceProduct ? "quantity" : "weight";
                     WinUIManager.SetCursorWithScreenOffset(0.1f, 8);
-                    Console.Write($"Enter the {weightText} of the product you wish to purchase: ");
+                    Console.Write($"Enter the {amountType} of the product you wish to purchase: ");
                     string amount = Console.ReadLine();
                     ProductManager.RelocateProduct(seller.SellerProducts, cart.CartProducts, productName, float.Parse(amount));
                     ProductManager.Availability(seller.SellerProducts);
@@ -222,15 +222,19 @@ class Program
                         ProductManager.AddProductsToList(customer.CustomerProducts, cart.CartProducts);
                         ProductManager.SearchForDuplicate(customer.CustomerProducts);
                         cart.CartProducts.Clear();
+                        Console.Clear();
                     }
                     else
                     {
                         Console.WriteLine("You don't have enough money.");
+                        ProductManager.AddProductsToList(seller.SellerProducts, cart.CartProducts);
+                        ProductManager.SearchForDuplicate(seller.SellerProducts);
+                        cart.CartProducts.Clear();
+                        Console.Clear();
                     }
-
                     break;
                 default:
-                    Console.WriteLine("Choose an option");
+                    WinUIManager.SetCursorWithScreenOffset(0.1f, 7, "Choose an option");
                     break;
             }
         }
@@ -277,7 +281,7 @@ class Customer
     public Customer(float money)
 
     {
-        CustomerProducts = new List<Product> { };
+        CustomerProducts = new List<Product>();
         Money = money;
     }
 
