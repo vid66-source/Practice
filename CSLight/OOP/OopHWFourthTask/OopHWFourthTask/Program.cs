@@ -3,10 +3,10 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace OopHWFourthTask;
 
-public static class WinUIManager
+public static class UIManager
 {
     public static int ScreenWidth, ScreenHeight;
-    static WinUIManager()
+    static UIManager()
     {
         ScreenWidth = Console.LargestWindowWidth;
         ScreenHeight = Console.LargestWindowHeight;
@@ -19,12 +19,12 @@ public static class WinUIManager
         Console.SetBufferSize((int)(ScreenWidth * screenShrinkRatioWidth), (int)(ScreenHeight * screenShrinkRatioHight));
     }
 
-    public static void UIElementHeadder(float xOffset, int yOffset)
+    public static void DrawHeader(float xOffset, int yOffset, string headerText)
     {
         Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset);
-        Console.WriteLine("Welcome to our store. You can see a list of our goods at the right. Add goods into the cart and then buy them!");
-        Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset + 1);
-        Console.WriteLine("______________________________________________________________________________________________________________");
+        Console.WriteLine(headerText);
+        yOffset++;
+        SetCursorWithScreenOffset(xOffset, yOffset, new string('_', headerText.Length));
 
     }
 
@@ -44,23 +44,14 @@ public static class WinUIManager
         }
     }
 
-    public static void UIElementListHeadder(float xOffset, int yOffset, string text)
-    {
 
-        Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset);
-        Console.Write(text);
-        Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset + 1);
-        Console.Write("_________________________________________________________");
-    }
-
-    public static void SetCursorWithScreenOffset(float xOffset, int yOffset)
+    public static void SetCursorWithScreenOffset(float xOffset, int yOffset, string text = null)
     {
         Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset);
-    }
-    public static void SetCursorWithScreenOffset(float xOffset, int yOffset, string text)
-    {
-        Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset);
-        Console.Write(text);
+        if (text != null)
+        {
+            Console.Write(text);
+        }
     }
 }
 
@@ -71,43 +62,31 @@ public static class ProductManager
         int productIndex = DetectProductIndex(productsList1, productName);
         Product product = productsList1[productIndex];
 
-        if (amount <= product.ProductCount && product.IsPieceProduct)
+        // Якщо продукт є штучним, перевіряємо, чи amount є цілим числом
+        if (product.IsPieceProduct && amount % 1 != 0)
         {
-            product.UpdateCount(product.ProductCount - amount);
-            var productForCart = new Product(product.ProductName, amount, product.ProductPrice, true);
-            productslList2.Add(productForCart);
+            UIManager.SetCursorWithScreenOffset(0.1f, 10, "Please enter a valid integer amount for piece products.");
+            return;
         }
 
-        if (amount <= product.ProductCount && !product.IsPieceProduct)
+        // Перевіряємо, чи достатньо продукту для переміщення
+        if (amount <= product.ProductCount)
         {
-            if (amount % 1 != 0)
-            {
-                Console.WriteLine("Please enter valid amount.");
-            }
             product.UpdateCount(product.ProductCount - amount);
-            var productForCart = new Product(product.ProductName, amount, product.ProductPrice, false);
-            productslList2.Add(productForCart);
+            var productToRelocate = new Product(product.ProductName, amount, product.ProductPrice, product.IsPieceProduct);
+            productslList2.Add(productToRelocate);
         }
-        else if (amount > product.ProductCount)
+        else
         {
             string weightOrPiece = product.IsPieceProduct ? "quantity" : "weight";
-            Console.WriteLine($"There is not enough product, please enter a different {weightOrPiece}.");
+            UIManager.SetCursorWithScreenOffset(0.1f, 10, $"There is not enough product, please enter a different {weightOrPiece}.");
         }
     }
 
 
     public static int DetectProductIndex(List<Product> products, string productName)
     {
-        int productIndex = 0;
-        for (int i = 0; i < products.Count; i++)
-        {
-            if (products[i].ProductName.ToLower() == productName.ToLower())
-            {
-                productIndex = i;
-                break;
-            }
-        }
-        return productIndex;
+        return products.FindIndex(p => p.ProductName.Equals(productName, StringComparison.OrdinalIgnoreCase));
     }
 
     public static void SearchForDuplicate(List<Product> products)
@@ -139,20 +118,49 @@ public static class ProductManager
         }
     }
 
-    public static void ShowProductsList<T>(float storePosX, int storePosY, List<Product> products, T owner) where T : class
+    public static void ShowProductsList<T>(float productsListPosX, int productsListPosY, List<Product> products, T owner, string headerText = null) where T : IMoneyHolder
     {
+        // Відображення заголовка, якщо він переданий
+        if (!string.IsNullOrEmpty(headerText))
+        {
+            UIManager.DrawHeader(productsListPosX, productsListPosY, headerText);
+            productsListPosY += 2; // Зміщення для наступних елементів
+        }
+
+        // Відображення списку продуктів
         foreach (var item in products)
         {
-            WinUIManager.SetCursorWithScreenOffset(storePosX, storePosY, item.ProductShowInf(owner));
-            storePosY++;
+            string productInfo = owner switch
+            {
+                Seller => $"{item.ProductShowInf(owner)}",
+                Customer => $"{item.ProductShowInf(owner)} | Purchased",
+                Cart => $"{item.ProductShowInf(owner)} | Total price: {item.ProductPrice * item.ProductCount}$",
+                _ => item.ProductShowInf(owner)
+            };
+
+            UIManager.SetCursorWithScreenOffset(productsListPosX, productsListPosY, productInfo);
+            productsListPosY++;
         }
+
+        // Відображення загальної суми грошей
+        string moneyText = string.Format("{0:F2}", owner.Money);
+        string ownerType = owner switch
+        {
+            Seller => "Store money",
+            Customer => "Your balance",
+            Cart => "Total cost",
+            _ => "Money"
+        };
+        string underListText = $"{ownerType}: {moneyText}";
+        UIManager.SetCursorWithScreenOffset(productsListPosX, productsListPosY, new string('_', underListText.Length));
+        productsListPosY++;
+        UIManager.SetCursorWithScreenOffset(productsListPosX, productsListPosY, $"{ownerType}: {moneyText}$");
     }
 
     public static void AddProductsToList(List<Product> productsList1, List<Product> productslList2)
     {
         productsList1.AddRange(productslList2);
     }
-
 
 }
 
@@ -164,87 +172,109 @@ class Program
         bool storeIsOpen = true;
         //store entities
         Seller seller = new Seller(0);
-        Customer customer = new Customer(200);
+        Customer customer = new Customer(50);
         Cart cart = new Cart();
-        WinUIManager.WindowSizeOption(0.8f, 0.8f);
+        UIManager.WindowSizeOption(0.9f, 0.8f);
         int sellerListCount = seller.SellerProducts.Count;
 
         while (storeIsOpen)
         {
             //Headder
-            WinUIManager.UIElementHeadder(0.1f, 0);
+            UIManager.DrawHeader(0.1f, 0, "Welcome to our store. You can see a list of our goods at the right. Add goods into the cart and then buy them!");
+
             //Menu
-            WinUIManager.UIElementMenu(0.1f, 2);
+            UIManager.UIElementMenu(0.1f, 2);
+
             //Customer
-            WinUIManager.UIElementListHeadder(0.1f, sellerListCount + 7, "Your Purchases:");
-            ProductManager.ShowProductsList(0.1f, sellerListCount + 9, customer.CustomerProducts, customer);
-            float customerMoneyNum = customer.Money;
-            string customerMoneyNumTxt = string.Format("{0:F2}", customerMoneyNum);
-            WinUIManager.SetCursorWithScreenOffset(0.1f, sellerListCount + customer.CustomerProducts.Count + 10);
-            Console.Write($"Customer money: {customerMoneyNumTxt}$");
+            ProductManager.ShowProductsList(0.1f, sellerListCount + 7, customer.CustomerProducts, customer, "Your Purchases:");
+
             //Store
-            WinUIManager.UIElementListHeadder(0.5f, 2, "Store assortment:");
-            ProductManager.ShowProductsList(0.5f, 4, seller.SellerProducts, seller);
-            float sellerMoneyNum = seller.Money;
-            string sellerMoneyNumTxt = string.Format("{0:F2}", sellerMoneyNum);
-            WinUIManager.SetCursorWithScreenOffset(0.5f, sellerListCount + 5);
-            Console.Write($"Store money: {sellerMoneyNumTxt}$");
+            ProductManager.ShowProductsList(0.5f, 2, seller.SellerProducts, seller, "Store assortment:");
+
             //Cart
-            WinUIManager.UIElementListHeadder(0.5f, sellerListCount + 7, "Your Cart:");
-            ProductManager.ShowProductsList(0.5f, sellerListCount + 9, cart.CartProducts, cart);
-            float cartProductsSum = cart.CartProducts.Count > 0 ? cart.TotalCost() : 0;
-            string cartProductsSumTxt = string.Format("{0:F2}", cartProductsSum);
-            WinUIManager.SetCursorWithScreenOffset(0.5f, sellerListCount + cart.CartProducts.Count + 10);
-            Console.Write($"Total cost: {cartProductsSumTxt}$");
-            WinUIManager.SetCursorWithScreenOffset(0.1f, 6);
+            ProductManager.ShowProductsList(0.5f, sellerListCount + 7, cart.CartProducts, cart, "Your Cart:");
+
+            //Input Field
+            UIManager.SetCursorWithScreenOffset(0.1f, 6);
 
             switch (Console.ReadLine())
             {
                 case "1":
-                    WinUIManager.SetCursorWithScreenOffset(0.1f, 7);
+                    UIManager.SetCursorWithScreenOffset(0.1f, 7);
                     Console.Write("Enter product name: ");
-                    string productName = Console.ReadLine();
-                    string amountType = seller.SellerProducts[ProductManager.DetectProductIndex(seller.SellerProducts, productName)].IsPieceProduct ? "quantity" : "weight";
-                    WinUIManager.SetCursorWithScreenOffset(0.1f, 8);
+                    string productNameInput = Console.ReadLine();
+                    //Wrong input
+                    if (ProductManager.DetectProductIndex(seller.SellerProducts, productNameInput) == -1)
+                    {
+                        UIManager.SetCursorWithScreenOffset(0.1f, 8, "Invalid input. Press any key to return to main menu...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        continue; // Повертаємося до початку циклу
+                    }
+                    string amountType = seller.SellerProducts[ProductManager.DetectProductIndex(seller.SellerProducts, productNameInput)].IsPieceProduct ? "quantity" : "weight";
+                    UIManager.SetCursorWithScreenOffset(0.1f, 8);
                     Console.Write($"Enter the {amountType} of the product you wish to purchase: ");
-                    string amount = Console.ReadLine();
-                    ProductManager.RelocateProduct(seller.SellerProducts, cart.CartProducts, productName, float.Parse(amount));
+                    string amountInput = Console.ReadLine();
+                    float amountNumber;
+                    //Wrong input
+                    if (!float.TryParse(amountInput, out amountNumber))
+                    {
+                        UIManager.SetCursorWithScreenOffset(0.1f, 9, "Invalid input. Press any key to return to main menu...");
+                        Console.ReadKey();
+                        Console.Clear();
+                        continue;
+                    }
+                    ProductManager.RelocateProduct(seller.SellerProducts, cart.CartProducts, productNameInput, amountNumber);
                     ProductManager.Availability(seller.SellerProducts);
                     ProductManager.SearchForDuplicate(cart.CartProducts);
-                    Console.Clear();
+                    UIManager.SetCursorWithScreenOffset(0.1f, 9, "Press any key to continue.");
+                    Console.ReadKey();
                     break;
                 case "2":
-                    float customerMoney = customer.Money;
-                    float cartTotalCost = cart.TotalCost();
-                    if (cartTotalCost <= customerMoney)
+                    if (cart.TotalCost() <= customer.Money)
                     {
                         customer.PayMoney(cart.TotalCost());
+                        seller.GetMoney(cart.TotalCost());
                         ProductManager.AddProductsToList(customer.CustomerProducts, cart.CartProducts);
                         ProductManager.SearchForDuplicate(customer.CustomerProducts);
                         cart.CartProducts.Clear();
-                        Console.Clear();
+                        UIManager.SetCursorWithScreenOffset(0.1f, 11, "Press any key to continue.");
+                        Console.ReadKey();
                     }
                     else
                     {
-                        Console.WriteLine("You don't have enough money.");
                         ProductManager.AddProductsToList(seller.SellerProducts, cart.CartProducts);
                         ProductManager.SearchForDuplicate(seller.SellerProducts);
                         cart.CartProducts.Clear();
-                        Console.Clear();
+                        UIManager.SetCursorWithScreenOffset(0.1f, 7, "You don't have enough money.");
+                        UIManager.SetCursorWithScreenOffset(0.1f, 11, "Press any key to continue.");
+                        Console.ReadKey();
+
                     }
                     break;
                 default:
-                    WinUIManager.SetCursorWithScreenOffset(0.1f, 7, "Choose an option");
+                    UIManager.SetCursorWithScreenOffset(0.1f, 6, "Wrong input. Press any key to return to main menu...");
+                    Console.ReadKey();
                     break;
             }
+            Console.Clear();
         }
     }
+
 }
 
-class Seller
+public interface IMoneyHolder
+{
+    float Money { get; }
+    List<Product> Products { get; }
+}
+
+class Seller : IMoneyHolder
 {
     public List<Product> SellerProducts { get; private set; }
     public float Money { get; private set; }
+
+    public List<Product> Products => SellerProducts;
 
     public Seller(float money)
     {
@@ -274,10 +304,13 @@ class Seller
 
 }
 
-class Customer
+class Customer : IMoneyHolder
 {
     public List<Product> CustomerProducts { get; private set; }
     public float Money { get; private set; }
+
+    public List<Product> Products => CustomerProducts;
+
     public Customer(float money)
 
     {
@@ -291,13 +324,18 @@ class Customer
     }
 }
 
-class Cart
+class Cart : IMoneyHolder
 {
     public List<Product> CartProducts { get; private set; }
+
+    public float Money { get; private set; }
+
+    public List<Product> Products => CartProducts;
 
     public Cart()
     {
         CartProducts = new List<Product>();
+        Money = TotalCost();
     }
 
     public float TotalCost()
@@ -332,26 +370,21 @@ public class Product
         ProductCount = newCount;
     }
 
-    public string ProductShowInf(object owner)
+    public string ProductShowInf(IMoneyHolder owner)
     {
         string unit = IsPieceProduct ? "pcs" : "kg";
+        string priceUnit = IsPieceProduct ? "piece" : "kg";
         string productDetails = $"Product: {ProductName}, ";
 
-        if (IsPieceProduct)
-        {
-            productDetails += $"Quantity: {ProductCount} {unit}";
-        }
-        else
-        {
-            productDetails += $"Weight: {ProductCount} {unit}";
-        }
+        productDetails += IsPieceProduct
+            ? $"Quantity: {ProductCount} {unit}"
+            : $"Weight: {ProductCount} {unit}";
 
         if (owner is Seller)
         {
-            productDetails += $", Price: {ProductPrice}$";
+            productDetails += $" | Price per {priceUnit}: {ProductPrice}$";
         }
 
         return productDetails;
     }
-
 }
