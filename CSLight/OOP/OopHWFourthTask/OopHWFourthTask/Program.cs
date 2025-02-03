@@ -62,11 +62,10 @@ public static class ProductManager
         int productIndex = DetectProductIndex(productsList1, productName);
         Product product = productsList1[productIndex];
 
-        // Якщо продукт є штучним, перевіряємо, чи amount є цілим числом
-        if (product.IsPieceProduct && amount % 1 != 0)
+        // Якщо продукт не є штучним, округлюємо до 2 десяткових знаків
+        if (!product.IsPieceProduct)
         {
-            UIManager.SetCursorWithScreenOffset(0.1f, 10, "Please enter a valid integer amount for piece products.");
-            return;
+            amount = (float)Math.Round(amount, 2);
         }
 
         // Перевіряємо, чи достатньо продукту для переміщення
@@ -79,10 +78,9 @@ public static class ProductManager
         else
         {
             string weightOrPiece = product.IsPieceProduct ? "quantity" : "weight";
-            UIManager.SetCursorWithScreenOffset(0.1f, 10, $"There is not enough product, please enter a different {weightOrPiece}.");
+            UIManager.SetCursorWithScreenOffset(0.1f, 9, $"There is not enough product, please enter a different {weightOrPiece}.");
         }
     }
-
 
     public static int DetectProductIndex(List<Product> products, string productName)
     {
@@ -134,7 +132,7 @@ public static class ProductManager
             {
                 Seller => $"{item.ProductShowInf(owner)}",
                 Customer => $"{item.ProductShowInf(owner)} | Purchased",
-                Cart => $"{item.ProductShowInf(owner)} | Total price: {item.ProductPrice * item.ProductCount}$",
+                Cart => string.Format("{0} | Total price: {1:F2}$", item.ProductShowInf(owner), item.ProductPrice * item.ProductCount),
                 _ => item.ProductShowInf(owner)
             };
 
@@ -203,19 +201,23 @@ class Program
                     UIManager.SetCursorWithScreenOffset(0.1f, 7);
                     Console.Write("Enter product name: ");
                     string productNameInput = Console.ReadLine();
+
                     //Wrong input
                     if (ProductManager.DetectProductIndex(seller.SellerProducts, productNameInput) == -1)
                     {
                         UIManager.SetCursorWithScreenOffset(0.1f, 8, "Invalid input. Press any key to return to main menu...");
                         Console.ReadKey();
                         Console.Clear();
-                        continue; // Повертаємося до початку циклу
+                        break; // Повертаємося до початку циклу
                     }
+
                     string amountType = seller.SellerProducts[ProductManager.DetectProductIndex(seller.SellerProducts, productNameInput)].IsPieceProduct ? "quantity" : "weight";
+
                     UIManager.SetCursorWithScreenOffset(0.1f, 8);
                     Console.Write($"Enter the {amountType} of the product you wish to purchase: ");
                     string amountInput = Console.ReadLine();
                     float amountNumber;
+
                     //Wrong input
                     if (!float.TryParse(amountInput, out amountNumber))
                     {
@@ -224,10 +226,22 @@ class Program
                         Console.Clear();
                         continue;
                     }
+
+                    // Перевірка для штучних продуктів
+                    bool isPieceProduct = seller.SellerProducts[ProductManager.DetectProductIndex(seller.SellerProducts, productNameInput)].IsPieceProduct;
+                    if (isPieceProduct && amountNumber % 1 != 0)
+                    {
+                        UIManager.SetCursorWithScreenOffset(0.1f, 9, "Please enter a valid integer amount for piece products.");
+                        Console.ReadKey();
+                        Console.Clear();
+                        continue; // Повертаємося до початку циклу
+                    }
+
                     ProductManager.RelocateProduct(seller.SellerProducts, cart.CartProducts, productNameInput, amountNumber);
                     ProductManager.Availability(seller.SellerProducts);
                     ProductManager.SearchForDuplicate(cart.CartProducts);
-                    UIManager.SetCursorWithScreenOffset(0.1f, 9, "Press any key to continue.");
+                    UIManager.SetCursorWithScreenOffset(0.1f, 9, "Product successfully added to your shopping cart.");
+                    UIManager.SetCursorWithScreenOffset(0.1f, 10, "Press any key to continue.");
                     Console.ReadKey();
                     break;
                 case "2":
@@ -238,7 +252,7 @@ class Program
                         ProductManager.AddProductsToList(customer.CustomerProducts, cart.CartProducts);
                         ProductManager.SearchForDuplicate(customer.CustomerProducts);
                         cart.CartProducts.Clear();
-                        UIManager.SetCursorWithScreenOffset(0.1f, 11, "Press any key to continue.");
+                        UIManager.SetCursorWithScreenOffset(0.1f, 7, "Press any key to continue.");
                         Console.ReadKey();
                     }
                     else
@@ -328,14 +342,13 @@ class Cart : IMoneyHolder
 {
     public List<Product> CartProducts { get; private set; }
 
-    public float Money { get; private set; }
+    public float Money => TotalCost();
 
     public List<Product> Products => CartProducts;
 
     public Cart()
     {
         CartProducts = new List<Product>();
-        Money = TotalCost();
     }
 
     public float TotalCost()
