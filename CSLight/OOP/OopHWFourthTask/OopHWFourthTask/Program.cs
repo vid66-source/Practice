@@ -1,11 +1,24 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace OopHWFourthTask;
 
 public static class UIManager
 {
+    public static readonly string CustomerHeader = "Your Purchases:";
+    public static readonly string StoreHeader = "Store assortment:";
+    public static readonly string CartHeader = "Your Cart:";
+    public static readonly string MainHeader = "Welcome to our store. You can see a list of our goods at the right. Add goods into the cart and then buy them!";
+
     public static int ScreenWidth, ScreenHeight;
+
+    private static readonly string[] MenuItems = {
+    "Menu:",
+    "1) Add any product to your cart.",
+    "2) Purchase products in your cart.",
+    "Please choose your option"
+    };
     static UIManager()
     {
         ScreenWidth = Console.LargestWindowWidth;
@@ -30,17 +43,20 @@ public static class UIManager
 
     public static void UIElementMenu(float xOffset, int yOffset)
     {
-        string[] menuItems =
+        StringBuilder menuText = new StringBuilder();
+        foreach (var item in MenuItems)
         {
-            "Menu:",
-            "1) Add any product to your cart.",
-            "2) Purchase products in your cart.",
-            "Please choose your option"
-        };
+            menuText.AppendLine(item);
+        }
 
-        for (int i = 0; i < menuItems.Length; i++)
+        DrawTextLines(xOffset, yOffset, menuText.ToString().Split('\n'));
+
+    }
+    public static void DrawTextLines(float xOffset, int yOffset, string[] lines)
+    {
+        for (int i = 0; i < lines.Length; i++)
         {
-            SetCursorWithScreenOffset(xOffset, yOffset + i, menuItems[i]);
+            SetCursorWithScreenOffset(xOffset, yOffset + i, lines[i]);
         }
     }
 
@@ -118,9 +134,13 @@ public static class ProductManager
 
     public static void ShowProductsList<T>(float productsListPosX, int productsListPosY, List<Product> products, T owner, string headerText = null) where T : IMoneyHolder
     {
+        // Використовуємо StringBuilder для збору всього тексту для виведення
+        StringBuilder displayText = new StringBuilder();
+
         // Відображення заголовка, якщо він переданий
         if (!string.IsNullOrEmpty(headerText))
         {
+            // Просто викликаємо DrawHeader для відображення заголовка
             UIManager.DrawHeader(productsListPosX, productsListPosY, headerText);
             productsListPosY += 2; // Зміщення для наступних елементів
         }
@@ -136,8 +156,9 @@ public static class ProductManager
                 _ => item.ProductShowInf(owner)
             };
 
+            // Виведення інформації про продукт на екрані
             UIManager.SetCursorWithScreenOffset(productsListPosX, productsListPosY, productInfo);
-            productsListPosY++;
+            productsListPosY++; // Переміщаємося на наступний рядок
         }
 
         // Відображення загальної суми грошей
@@ -149,9 +170,15 @@ public static class ProductManager
             Cart => "Total cost",
             _ => "Money"
         };
+
         string underListText = $"{ownerType}: {moneyText}";
-        UIManager.SetCursorWithScreenOffset(productsListPosX, productsListPosY, new string('_', underListText.Length));
+
+        // Збільшуємо Y для відображення підсумку на новому рядку
         productsListPosY++;
+
+        // Виведення підсумкового тексту (підсумок з символами _ і текстом суми)
+        UIManager.SetCursorWithScreenOffset(productsListPosX, productsListPosY, new string('_', underListText.Length));
+        productsListPosY++; // Зміщуємо на наступний рядок для тексту суми
         UIManager.SetCursorWithScreenOffset(productsListPosX, productsListPosY, $"{ownerType}: {moneyText}$");
     }
 
@@ -159,7 +186,6 @@ public static class ProductManager
     {
         productsList1.AddRange(productslList2);
     }
-
 }
 
 
@@ -178,19 +204,19 @@ class Program
         while (storeIsOpen)
         {
             //Headder
-            UIManager.DrawHeader(0.1f, 0, "Welcome to our store. You can see a list of our goods at the right. Add goods into the cart and then buy them!");
+            UIManager.DrawHeader(0.1f, 0, UIManager.MainHeader);
 
             //Menu
             UIManager.UIElementMenu(0.1f, 2);
 
             //Customer
-            ProductManager.ShowProductsList(0.1f, sellerListCount + 7, customer.CustomerProducts, customer, "Your Purchases:");
+            ProductManager.ShowProductsList(0.1f, sellerListCount + 8, customer.CustomerProducts, customer, UIManager.CustomerHeader);
 
             //Store
-            ProductManager.ShowProductsList(0.5f, 2, seller.SellerProducts, seller, "Store assortment:");
+            ProductManager.ShowProductsList(0.5f, 2, seller.SellerProducts, seller, UIManager.StoreHeader);
 
             //Cart
-            ProductManager.ShowProductsList(0.5f, sellerListCount + 7, cart.CartProducts, cart, "Your Cart:");
+            ProductManager.ShowProductsList(0.5f, sellerListCount + 8, cart.CartProducts, cart, UIManager.CartHeader);
 
             //Input Field
             UIManager.SetCursorWithScreenOffset(0.1f, 6);
@@ -382,22 +408,23 @@ public class Product
     {
         ProductCount = newCount;
     }
-
     public string ProductShowInf(IMoneyHolder owner)
     {
+        StringBuilder productDetails = new StringBuilder();
+
         string unit = IsPieceProduct ? "pcs" : "kg";
         string priceUnit = IsPieceProduct ? "piece" : "kg";
-        string productDetails = $"Product: {ProductName}, ";
 
-        productDetails += IsPieceProduct
+        productDetails.Append($"Product: {ProductName}, ");
+        productDetails.Append(IsPieceProduct
             ? $"Quantity: {ProductCount} {unit}"
-            : $"Weight: {ProductCount} {unit}";
+            : $"Weight: {ProductCount} {unit}");
 
         if (owner is Seller)
         {
-            productDetails += $" | Price per {priceUnit}: {ProductPrice}$";
+            productDetails.Append($" | Price per {priceUnit}: {ProductPrice}$");
         }
 
-        return productDetails;
+        return productDetails.ToString();
     }
 }
