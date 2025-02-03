@@ -1,4 +1,4 @@
-﻿namespace OppHWSecondTask;
+﻿namespace DataBaseApp;
 
 class Program
 {

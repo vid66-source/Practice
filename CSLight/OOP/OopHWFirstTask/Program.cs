@@ -1,4 +1,4 @@
-﻿namespace OopHWFirstTask;
+﻿namespace UserClass;
 
 class Program
 {
