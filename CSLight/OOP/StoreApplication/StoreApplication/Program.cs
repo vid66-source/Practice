@@ -2,7 +2,7 @@
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace OopHWFourthTask;
+namespace StoreApplication;
 
 public static class UIManager
 {
