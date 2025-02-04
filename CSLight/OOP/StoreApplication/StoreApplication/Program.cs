@@ -1,430 +1,408 @@
-﻿using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace StoreApplication;
 
-public static class UIManager
+public static class Constants
 {
-    public static readonly string CustomerHeader = "Your Purchases:";
-    public static readonly string StoreHeader = "Store assortment:";
-    public static readonly string CartHeader = "Your Cart:";
-    public static readonly string MainHeader = "Welcome to our store. You can see a list of our goods at the right. Add goods into the cart and then buy them!";
+    // Main Menu Headers
+    public const string MAIN_HEADER = "Welcome to our store. You can see a list of our goods at the right. Add goods into the cart and then buy them!";
+    public const string MENU_TITLE = "Menu:";
+    public const string ADD_TO_CART_OPTION = "1) Add any product to your cart";
+    public const string PURCHASE_OPTION = "2) Purchase products in your cart";
+    public const string EXIT_OPTION = "3) Exit";
+    public const string CHOOSE_OPTION = "Choose option: ";
 
-    public static int ScreenWidth, ScreenHeight;
+    // Section Headers
+    public const string STORE_INVENTORY = "Store assortment:";
+    public const string YOUR_PURCHASES = "Your purchases:";
+    public const string SHOPPING_CART = "Your Cart:";
 
-    private static readonly string[] MenuItems = {
-    "Menu:",
-    "1) Add any product to your cart.",
-    "2) Purchase products in your cart.",
-    "Please choose your option"
-    };
-    static UIManager()
-    {
-        ScreenWidth = Console.LargestWindowWidth;
-        ScreenHeight = Console.LargestWindowHeight;
-    }
+    // Input Prompts
+    public const string ENTER_PRODUCT_NAME = "Enter product name: ";
+    public const string ENTER_QUANTITY = "Enter quantity: ";
+    public const string ENTER_WEIGHT = "Enter weight: ";
 
-    public static void WindowSizeOption(float screenShrinkRatioWidth, float screenShrinkRatioHight)
-    {
+    // Success Messages
+    public const string PRODUCT_ADDED = "Product added to cart.";
+    public const string PURCHASE_SUCCESSFUL = "Purchase successful!";
 
-        Console.SetWindowSize((int)(ScreenWidth * screenShrinkRatioWidth), (int)(ScreenHeight * screenShrinkRatioHight));
-        Console.SetBufferSize((int)(ScreenWidth * screenShrinkRatioWidth), (int)(ScreenHeight * screenShrinkRatioHight));
-    }
+    // Error Messages
+    public const string PRODUCT_NOT_FOUND = "Product not found";
+    public const string INSUFFICIENT_FUNDS = "Insufficient funds.";
+    public const string INVALID_INPUT = "Invalid input.";
+    public const string INVALID_CHOICE = "Invalid choice. Try again.";
+    public const string NOT_ENOUGH_PRODUCT = "There is not enough product";
+    public const string AMOUNT_MUST_BE_POSITIVE = "The number must be greater than zero.";
+    public const string WHOLE_NUMBER_REQUIRED = "For a piece product, the quantity must be a whole number";
 
-    public static void DrawHeader(float xOffset, int yOffset, string headerText)
-    {
-        Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset);
-        Console.WriteLine(headerText);
-        yOffset++;
-        SetCursorWithScreenOffset(xOffset, yOffset, new string('_', headerText.Length));
+    // Display Labels
+    public const string STORE_MONEY_LABEL = "Store money";
+    public const string YOUR_BALANCE_LABEL = "Your balance";
+    public const string TOTAL_COST_LABEL = "Total cost";
+    public const string DEFAULT_MONEY_LABEL = "Money";
 
-    }
-
-    public static void UIElementMenu(float xOffset, int yOffset)
-    {
-        StringBuilder menuText = new StringBuilder();
-        foreach (var item in MenuItems)
-        {
-            menuText.AppendLine(item);
-        }
-
-        DrawTextLines(xOffset, yOffset, menuText.ToString().Split('\n'));
-
-    }
-    public static void DrawTextLines(float xOffset, int yOffset, string[] lines)
-    {
-        for (int i = 0; i < lines.Length; i++)
-        {
-            SetCursorWithScreenOffset(xOffset, yOffset + i, lines[i]);
-        }
-    }
-
-
-    public static void SetCursorWithScreenOffset(float xOffset, int yOffset, string text = null)
-    {
-        Console.SetCursorPosition((int)(ScreenWidth * xOffset), yOffset);
-        if (text != null)
-        {
-            Console.Write(text);
-        }
-    }
+    // Unit Labels
+    public const string UNIT_PIECES = "pcs";
+    public const string UNIT_KG = "kg";
+    public const string PRICE_PER_PIECE = "piece";
+    public const string PRICE_PER_KG = "kg";
 }
 
-public static class ProductManager
+public interface IProduct
 {
-    public static void RelocateProduct(List<Product> productsList1, List<Product> productslList2, string productName, float amount)
-    {
-        int productIndex = DetectProductIndex(productsList1, productName);
-        Product product = productsList1[productIndex];
+    string Name { get; }
+    decimal Price { get; }
+    decimal Quantity { get; }
+    bool IsPieceProduct { get; }
+    string GetDisplayInfo(IBalanceHolder owner);
+    void UpdateQuantity(decimal newQuantity);
+}
 
-        // Якщо продукт не є штучним, округлюємо до 2 десяткових знаків
-        if (!product.IsPieceProduct)
-        {
-            amount = (float)Math.Round(amount, 2);
-        }
+public interface IBalanceHolder
+{
+    decimal Balance { get; }
+    List<IProduct> Products { get; }
+}
 
-        // Перевіряємо, чи достатньо продукту для переміщення
-        if (amount <= product.ProductCount)
-        {
-            product.UpdateCount(product.ProductCount - amount);
-            var productToRelocate = new Product(product.ProductName, amount, product.ProductPrice, product.IsPieceProduct);
-            productslList2.Add(productToRelocate);
-        }
-        else
-        {
-            string weightOrPiece = product.IsPieceProduct ? "quantity" : "weight";
-            UIManager.SetCursorWithScreenOffset(0.1f, 9, $"There is not enough product, please enter a different {weightOrPiece}.");
-        }
-    }
+// Інтерфейс для тих, хто може отримувати гроші
+public interface IMoneyReceiver : IBalanceHolder
+{
+    void AddMoney(decimal amount);
+}
 
-    public static int DetectProductIndex(List<Product> products, string productName)
-    {
-        return products.FindIndex(p => p.ProductName.Equals(productName, StringComparison.OrdinalIgnoreCase));
-    }
-
-    public static void SearchForDuplicate(List<Product> products)
-    {
-        for (int i = 0; i < products.Count; i++)
-        {
-            string productToCompare = products[i].ProductName;
-
-            for (int j = i + 1; j < products.Count; j++)
-            {
-                if (products[j].ProductName == productToCompare)
-                {
-                    products[i].UpdateCount(products[i].ProductCount + products[j].ProductCount);
-                    products.RemoveAt(j);
-                    j--;
-                }
-            }
-        }
-    }
-
-    public static void Availability(List<Product> products)
-    {
-        for (int i = products.Count - 1; i >= 0; i--)
-        {
-            if (products[i].ProductCount == 0)
-            {
-                products.RemoveAt(i);
-            }
-        }
-    }
-
-    public static void ShowProductsList<T>(float productsListPosX, int productsListPosY, List<Product> products, T owner, string headerText = null) where T : IMoneyHolder
-    {
-        // Використовуємо StringBuilder для збору всього тексту для виведення
-        StringBuilder displayText = new StringBuilder();
-
-        // Відображення заголовка, якщо він переданий
-        if (!string.IsNullOrEmpty(headerText))
-        {
-            // Просто викликаємо DrawHeader для відображення заголовка
-            UIManager.DrawHeader(productsListPosX, productsListPosY, headerText);
-            productsListPosY += 2; // Зміщення для наступних елементів
-        }
-
-        // Відображення списку продуктів
-        foreach (var item in products)
-        {
-            string productInfo = owner switch
-            {
-                Seller => $"{item.ProductShowInf(owner)}",
-                Customer => $"{item.ProductShowInf(owner)} | Purchased",
-                Cart => string.Format("{0} | Total price: {1:F2}$", item.ProductShowInf(owner), item.ProductPrice * item.ProductCount),
-                _ => item.ProductShowInf(owner)
-            };
-
-            // Виведення інформації про продукт на екрані
-            UIManager.SetCursorWithScreenOffset(productsListPosX, productsListPosY, productInfo);
-            productsListPosY++; // Переміщаємося на наступний рядок
-        }
-
-        // Відображення загальної суми грошей
-        string moneyText = string.Format("{0:F2}", owner.Money);
-        string ownerType = owner switch
-        {
-            Seller => "Store money",
-            Customer => "Your balance",
-            Cart => "Total cost",
-            _ => "Money"
-        };
-
-        string underListText = $"{ownerType}: {moneyText}";
-
-        // Збільшуємо Y для відображення підсумку на новому рядку
-        productsListPosY++;
-
-        // Виведення підсумкового тексту (підсумок з символами _ і текстом суми)
-        UIManager.SetCursorWithScreenOffset(productsListPosX, productsListPosY, new string('_', underListText.Length));
-        productsListPosY++; // Зміщуємо на наступний рядок для тексту суми
-        UIManager.SetCursorWithScreenOffset(productsListPosX, productsListPosY, $"{ownerType}: {moneyText}$");
-    }
-
-    public static void AddProductsToList(List<Product> productsList1, List<Product> productslList2)
-    {
-        productsList1.AddRange(productslList2);
-    }
+// Інтерфейс для тих, хто може витрачати гроші
+public interface IMoneySpender : IBalanceHolder
+{
+    void DeductMoney(decimal amount);
 }
 
 
-class Program
+public class BaseProduct : IProduct
 {
-    static void Main(string[] args)
-    {
-        bool storeIsOpen = true;
-        //store entities
-        Seller seller = new Seller(0);
-        Customer customer = new Customer(50);
-        Cart cart = new Cart();
-        UIManager.WindowSizeOption(0.9f, 0.8f);
-        int sellerListCount = seller.SellerProducts.Count;
-
-        while (storeIsOpen)
-        {
-            //Headder
-            UIManager.DrawHeader(0.1f, 0, UIManager.MainHeader);
-
-            //Menu
-            UIManager.UIElementMenu(0.1f, 2);
-
-            //Customer
-            ProductManager.ShowProductsList(0.1f, sellerListCount + 8, customer.CustomerProducts, customer, UIManager.CustomerHeader);
-
-            //Store
-            ProductManager.ShowProductsList(0.5f, 2, seller.SellerProducts, seller, UIManager.StoreHeader);
-
-            //Cart
-            ProductManager.ShowProductsList(0.5f, sellerListCount + 8, cart.CartProducts, cart, UIManager.CartHeader);
-
-            //Input Field
-            UIManager.SetCursorWithScreenOffset(0.1f, 6);
-
-            switch (Console.ReadLine())
-            {
-                case "1":
-                    UIManager.SetCursorWithScreenOffset(0.1f, 7);
-                    Console.Write("Enter product name: ");
-                    string productNameInput = Console.ReadLine();
-
-                    //Wrong input
-                    if (ProductManager.DetectProductIndex(seller.SellerProducts, productNameInput) == -1)
-                    {
-                        UIManager.SetCursorWithScreenOffset(0.1f, 8, "Invalid input. Press any key to return to main menu...");
-                        Console.ReadKey();
-                        Console.Clear();
-                        break; // Повертаємося до початку циклу
-                    }
-
-                    string amountType = seller.SellerProducts[ProductManager.DetectProductIndex(seller.SellerProducts, productNameInput)].IsPieceProduct ? "quantity" : "weight";
-
-                    UIManager.SetCursorWithScreenOffset(0.1f, 8);
-                    Console.Write($"Enter the {amountType} of the product you wish to purchase: ");
-                    string amountInput = Console.ReadLine();
-                    float amountNumber;
-
-                    //Wrong input
-                    if (!float.TryParse(amountInput, out amountNumber))
-                    {
-                        UIManager.SetCursorWithScreenOffset(0.1f, 9, "Invalid input. Press any key to return to main menu...");
-                        Console.ReadKey();
-                        Console.Clear();
-                        continue;
-                    }
-
-                    // Перевірка для штучних продуктів
-                    bool isPieceProduct = seller.SellerProducts[ProductManager.DetectProductIndex(seller.SellerProducts, productNameInput)].IsPieceProduct;
-                    if (isPieceProduct && amountNumber % 1 != 0)
-                    {
-                        UIManager.SetCursorWithScreenOffset(0.1f, 9, "Please enter a valid integer amount for piece products.");
-                        Console.ReadKey();
-                        Console.Clear();
-                        continue; // Повертаємося до початку циклу
-                    }
-
-                    ProductManager.RelocateProduct(seller.SellerProducts, cart.CartProducts, productNameInput, amountNumber);
-                    ProductManager.Availability(seller.SellerProducts);
-                    ProductManager.SearchForDuplicate(cart.CartProducts);
-                    UIManager.SetCursorWithScreenOffset(0.1f, 9, "Product successfully added to your shopping cart.");
-                    UIManager.SetCursorWithScreenOffset(0.1f, 10, "Press any key to continue.");
-                    Console.ReadKey();
-                    break;
-                case "2":
-                    if (cart.TotalCost() <= customer.Money)
-                    {
-                        customer.PayMoney(cart.TotalCost());
-                        seller.GetMoney(cart.TotalCost());
-                        ProductManager.AddProductsToList(customer.CustomerProducts, cart.CartProducts);
-                        ProductManager.SearchForDuplicate(customer.CustomerProducts);
-                        cart.CartProducts.Clear();
-                        UIManager.SetCursorWithScreenOffset(0.1f, 7, "Press any key to continue.");
-                        Console.ReadKey();
-                    }
-                    else
-                    {
-                        ProductManager.AddProductsToList(seller.SellerProducts, cart.CartProducts);
-                        ProductManager.SearchForDuplicate(seller.SellerProducts);
-                        cart.CartProducts.Clear();
-                        UIManager.SetCursorWithScreenOffset(0.1f, 7, "You don't have enough money.");
-                        UIManager.SetCursorWithScreenOffset(0.1f, 11, "Press any key to continue.");
-                        Console.ReadKey();
-
-                    }
-                    break;
-                default:
-                    UIManager.SetCursorWithScreenOffset(0.1f, 6, "Wrong input. Press any key to return to main menu...");
-                    Console.ReadKey();
-                    break;
-            }
-            Console.Clear();
-        }
-    }
-
-}
-
-public interface IMoneyHolder
-{
-    float Money { get; }
-    List<Product> Products { get; }
-}
-
-class Seller : IMoneyHolder
-{
-    public List<Product> SellerProducts { get; private set; }
-    public float Money { get; private set; }
-
-    public List<Product> Products => SellerProducts;
-
-    public Seller(float money)
-    {
-        Money = money;
-
-        SellerProducts = new List<Product>{
-            new Product("Balloons", 30f, 2.99f, true),
-            new Product("Chocolate Bar", 15f, 8.50f, true),
-            new Product("Kinder Surprise", 12f, 12.99f, true),
-            new Product("Toy Soldier", 8f, 15.99f, true),
-            new Product("Milk", 5f, 10f, true),
-            new Product("Toy Car", 6f, 25.99f, true),
-            new Product("Banana", 10.0f, 5.99f, false),
-            new Product("Carrot", 8.0f, 3.99f, false),
-            new Product("Chicken Meat", 5.0f, 8.99f, false),
-            new Product("Veal", 7.0f, 5.99f, false),
-            new Product("Onion", 6.0f, 2.99f, false),
-            new Product("Potato", 12.0f, 5.99f, false),
-            new Product("Tomato", 1.0f, 5.99f, false)
-        };
-    }
-
-    public void GetMoney(float productsPrice)
-    {
-        Money += productsPrice;
-    }
-
-}
-
-class Customer : IMoneyHolder
-{
-    public List<Product> CustomerProducts { get; private set; }
-    public float Money { get; private set; }
-
-    public List<Product> Products => CustomerProducts;
-
-    public Customer(float money)
-
-    {
-        CustomerProducts = new List<Product>();
-        Money = money;
-    }
-
-    public void PayMoney(float productsPrice)
-    {
-        Money -= productsPrice;
-    }
-}
-
-class Cart : IMoneyHolder
-{
-    public List<Product> CartProducts { get; private set; }
-
-    public float Money => TotalCost();
-
-    public List<Product> Products => CartProducts;
-
-    public Cart()
-    {
-        CartProducts = new List<Product>();
-    }
-
-    public float TotalCost()
-    {
-        float totalCost = 0;
-        foreach (var item in CartProducts)
-        {
-            totalCost += item.ProductPrice * item.ProductCount;
-        }
-        return totalCost;
-    }
-
-}
-
-public class Product
-{
-    public string ProductName { get; private set; }
-    public float ProductCount { get; private set; }
-    public float ProductPrice { get; private set; }
+    public string Name { get; private set; }
+    public decimal Price { get; private set; }
+    public decimal Quantity { get; private set; }
     public bool IsPieceProduct { get; private set; }
 
-    public Product(string productName, float weight, float productPrice, bool isPieceProduct)
+    public BaseProduct(string name, decimal quantity, decimal price, bool isPieceProduct)
     {
-        ProductName = productName;
-        ProductCount = weight;
-        ProductPrice = productPrice;
+        Name = name;
+        Quantity = quantity;
+        Price = price;
         IsPieceProduct = isPieceProduct;
     }
 
-    public void UpdateCount(float newCount)
+    public virtual string GetDisplayInfo(IBalanceHolder owner)
     {
-        ProductCount = newCount;
-    }
-    public string ProductShowInf(IMoneyHolder owner)
-    {
-        StringBuilder productDetails = new StringBuilder();
+        string unit = IsPieceProduct ? Constants.UNIT_PIECES : Constants.UNIT_KG;
+        string priceUnit = IsPieceProduct ? Constants.PRICE_PER_PIECE : Constants.PRICE_PER_KG;
 
-        string unit = IsPieceProduct ? "pcs" : "kg";
-        string priceUnit = IsPieceProduct ? "piece" : "kg";
-
-        productDetails.Append($"Product: {ProductName}, ");
-        productDetails.Append(IsPieceProduct
-            ? $"Quantity: {ProductCount} {unit}"
-            : $"Weight: {ProductCount} {unit}");
+        var details = new StringBuilder($"Product:: {Name}, ");
+        details.Append(IsPieceProduct
+            ? $"Quantity: {Quantity} {unit}"
+            : $"Weight: {Quantity} {unit}");
 
         if (owner is Seller)
         {
-            productDetails.Append($" | Price per {priceUnit}: {ProductPrice}$");
+            details.Append($" | Price per {priceUnit}: {Price}₴");
         }
 
-        return productDetails.ToString();
+        return details.ToString();
+    }
+
+    public void UpdateQuantity(decimal newQuantity)
+    {
+        Quantity = IsPieceProduct
+            ? Math.Round(newQuantity)
+            : Math.Round(newQuantity, 2);
+    }
+}
+
+public class Seller : IMoneyReceiver
+{
+    public decimal Balance { get; private set; }
+    public List<IProduct> Products { get; private set; }
+
+    public Seller(decimal initialBalance)
+    {
+        Balance = initialBalance;
+        Products = CreateInitialProductList();
+    }
+
+    private List<IProduct> CreateInitialProductList()
+    {
+        return new List<IProduct>
+                    {
+                    new BaseProduct("Balloons", 30m, 2.99m, true),
+                    new BaseProduct("Kinder Surprise", 12m, 12.99m, true),
+                    new BaseProduct("Chocolate Bar", 15m, 8.50m, true),
+                    new BaseProduct("Toy Soldier", 8m, 15.99m, true),
+                    new BaseProduct("Milk", 5m, 10m, true),
+                    new BaseProduct("Toy Car", 6m, 25.99m, true),
+                    new BaseProduct("Banana", 10.0m, 5.99m, false),
+                    new BaseProduct("Carrot", 8.0m, 3.99m, false),
+                    new BaseProduct("Chicken Meat", 5.0m, 8.99m, false),
+                    new BaseProduct("Veal", 7.0m, 5.99m, false),
+                    new BaseProduct("Onion", 6.0m, 2.99m, false),
+                    new BaseProduct("Potato", 12.0m, 5.99m, false),
+                    new BaseProduct("Tomato", 1.0m, 5.99m, false)
+                    };
+    }
+
+    public void AddMoney(decimal amount) => Balance += amount;
+
+}
+
+public class Customer : IMoneySpender
+{
+    public decimal Balance { get; private set; }
+    public List<IProduct> Products { get; private set; }
+
+    public Customer(decimal initialBalance)
+    {
+        Balance = initialBalance;
+        Products = new List<IProduct>();
+    }
+
+    public void DeductMoney(decimal amount) => Balance -= amount;
+
+}
+
+public class ShoppingCart : IBalanceHolder
+{
+    public decimal Balance => CalculateTotalCost();
+    public List<IProduct> Products { get; private set; }
+
+    public ShoppingCart()
+    {
+        Products = new List<IProduct>();
+    }
+
+    public decimal CalculateTotalCost() =>
+        Products.Sum(p => p.Price * p.Quantity);
+
+}
+
+public class ProductManager
+{
+    public static bool TransferProduct(
+        List<IProduct> sourceList,
+        List<IProduct> destinationList,
+        string productName,
+        decimal amount)
+    {
+        var product = sourceList.FirstOrDefault(p =>
+            p.Name.Equals(productName, StringComparison.OrdinalIgnoreCase));
+
+        if (product == null)
+        {
+            Console.WriteLine(Constants.PRODUCT_NOT_FOUND);
+            return false;
+        }
+
+        if (amount <= 0)
+        {
+            Console.WriteLine(Constants.AMOUNT_MUST_BE_POSITIVE);
+            return false;
+        }
+
+        if (product.IsPieceProduct && amount % 1 != 0)
+        {
+            Console.WriteLine(Constants.WHOLE_NUMBER_REQUIRED);
+            return false;
+        }
+
+        if (amount > product.Quantity)
+        {
+            string measureUnit = product.IsPieceProduct ? Constants.PRICE_PER_PIECE : Constants.UNIT_KG;
+            Console.WriteLine($"{Constants.NOT_ENOUGH_PRODUCT}. Available: {product.Quantity} {measureUnit}");
+            return false;
+        }
+
+        // Округлення значення залежно від типу продукту
+        decimal validatedAmount = product.IsPieceProduct ? Math.Floor(amount) : Math.Round(amount, 2);
+
+        var transferredProduct = new BaseProduct(
+            product.Name,
+            validatedAmount,
+            product.Price,
+            product.IsPieceProduct
+        );
+
+        destinationList.Add(transferredProduct);
+        product.UpdateQuantity(product.Quantity - validatedAmount);
+        return true;
+    }
+
+    public static void MergeSimilarProducts(List<IProduct> products)
+    {
+        var mergedProducts = products
+            .GroupBy(p => p.Name)
+            .Select(g => new BaseProduct(
+                g.Key,
+                g.Sum(p => p.Quantity),
+                g.First().Price,
+                g.First().IsPieceProduct
+            ))
+            .ToList();
+
+        products.Clear();
+        products.AddRange(mergedProducts);
+    }
+
+    public static void RemoveEmptyProducts(List<IProduct> products)
+    {
+        products.RemoveAll(p => p.Quantity <= 0);
+    }
+}
+
+public class ConsoleInterface
+{
+    public static void DisplayProducts(
+        List<IProduct> products,
+        IBalanceHolder owner, // Змінено на базовий інтерфейс
+        string header = null)
+    {
+        if (!string.IsNullOrEmpty(header))
+        {
+            Console.WriteLine(header);
+        }
+
+        foreach (var product in products)
+        {
+            Console.WriteLine(product.GetDisplayInfo(owner));
+        }
+
+        // Динамічне формування підсумкового рядка
+        decimal totalAmount = owner switch
+        {
+            Seller seller => seller.Balance,
+            Customer customer => customer.Balance,
+            ShoppingCart cart => cart.Balance,
+            _ => 0
+        };
+
+        // Використання відповідного значення для різних типів
+        string totalLabel = owner switch
+        {
+            Seller => Constants.STORE_MONEY_LABEL,
+            Customer => Constants.YOUR_BALANCE_LABEL,
+            ShoppingCart => Constants.TOTAL_COST_LABEL,
+            _ => Constants.DEFAULT_MONEY_LABEL
+        };
+
+        Console.WriteLine($"{totalLabel}: {totalAmount:C2}");
+    }
+}
+
+public class StoreApplication
+{
+    public void Run()
+    {
+        var seller = new Seller(0);
+        var customer = new Customer(500);
+        var cart = new ShoppingCart();
+
+        while (true)
+        {
+            Console.Clear();
+            DisplayMainMenu();
+
+            ConsoleInterface.DisplayProducts(seller.Products, seller, Constants.STORE_INVENTORY);
+            ConsoleInterface.DisplayProducts(customer.Products, customer, Constants.YOUR_PURCHASES);
+            ConsoleInterface.DisplayProducts(cart.Products, cart, Constants.SHOPPING_CART);
+
+            ProcessUserChoice(seller, customer, cart);
+        }
+    }
+
+    private void DisplayMainMenu()
+    {
+        Console.WriteLine(Constants.MAIN_HEADER);
+        Console.WriteLine(Constants.MENU_TITLE);
+        Console.WriteLine(Constants.ADD_TO_CART_OPTION);
+        Console.WriteLine(Constants.PURCHASE_OPTION);
+        Console.WriteLine(Constants.EXIT_OPTION);
+        Console.Write(Constants.CHOOSE_OPTION);
+    }
+
+    private void ProcessUserChoice(Seller seller, Customer customer, ShoppingCart cart)
+    {
+        switch (Console.ReadLine())
+        {
+            case "1":
+                AddProductToCart(seller, cart);
+                break;
+            case "2":
+                PurchaseProducts(seller, customer, cart);
+                break;
+            case "3":
+                Environment.Exit(0);
+                break;
+            default:
+                Console.WriteLine(Constants.INVALID_CHOICE);
+                break;
+        }
+    }
+
+    private void AddProductToCart(Seller seller, ShoppingCart cart)
+    {
+        Console.Write(Constants.ENTER_PRODUCT_NAME);
+        string productName = Console.ReadLine();
+
+        var product = seller.Products.FirstOrDefault(p =>
+            p.Name.Equals(productName, StringComparison.OrdinalIgnoreCase));
+
+        if (product == null)
+        {
+            Console.WriteLine(Constants.PRODUCT_NOT_FOUND);
+            return;
+        }
+
+        Console.Write(product.IsPieceProduct ? Constants.ENTER_QUANTITY : Constants.ENTER_WEIGHT);
+        if (!decimal.TryParse(Console.ReadLine(), out decimal amount))
+        {
+            Console.WriteLine(Constants.INVALID_INPUT);
+            return;
+        }
+
+        if (ProductManager.TransferProduct(seller.Products, cart.Products, productName, amount))
+        {
+            ProductManager.MergeSimilarProducts(cart.Products);
+            ProductManager.RemoveEmptyProducts(seller.Products);
+            Console.WriteLine(Constants.PRODUCT_ADDED);
+        }
+    }
+
+    private void PurchaseProducts(Seller seller, Customer customer, ShoppingCart cart)
+    {
+        decimal totalCost = cart.Balance;
+
+        if (customer.Balance >= totalCost)
+        {
+            customer.DeductMoney(totalCost);
+            seller.AddMoney(totalCost);
+
+            // Transfer all products from cart to customer
+            foreach (var product in cart.Products.ToList())
+            {
+                customer.Products.Add(product);
+            }
+            cart.Products.Clear();
+
+            Console.WriteLine(Constants.PURCHASE_SUCCESSFUL);
+        }
+        else
+        {
+            Console.WriteLine(Constants.INSUFFICIENT_FUNDS);
+        }
+    }
+
+    public static void Main()
+    {
+        new StoreApplication().Run();
     }
 }
